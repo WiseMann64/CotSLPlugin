@@ -1,0 +1,9 @@
+name: CotSLMain
+version: '${project.version}'
+main: me.wisemann64.soulland.SoulLand
+api-version: 1.16
+authors: [ WiseMann64 ]
+website: https://github.com/WiseMann64
+commands:
+  test:
+    description: test command

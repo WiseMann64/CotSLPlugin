@@ -1,0 +1,10 @@
+WOODEN_SWORD:
+  material:
+  type: WEAPON
+  damage: 4.5
+DIAMOND_SWORD:
+  type: WEAPON
+  damage: 7.25
+BOW:
+  type: WEAPON
+  damage: 6.0
