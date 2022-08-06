@@ -64,6 +64,7 @@ public class SLPlayer {
 
     public void onJoin() {
         handle.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
+        handle.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(40);
         handle.setHealth(40);
         PlayerInventory inv = handle.getInventory();
         inv.setItem(8, SLItems.menuStar());

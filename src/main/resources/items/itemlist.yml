@@ -1,10 +1,58 @@
 WOODEN_SWORD:
-  material:
   type: WEAPON
-  damage: 4.5
+  material: WOODEN_SWORD
+  name: "Wooden Sword"
+  mod:
+    sub: MELEE
+    damage: 6.9
+    max_upgrade: 10
 DIAMOND_SWORD:
   type: WEAPON
-  damage: 7.25
+  material: DIAMOND_SWORD
+  name: "Diamond Sword"
+  lore:
+    - "Ni nun ape watjana naega yeogitjana"
+    - "Neoe ipsullo mareul haejwo say yes say yes"
+    - "Nado moreuge neoege gago innabwa"
+    - "Buneun barame nae mam jeonhallae"
+    - "Love is true"
+  mod:
+    sub: MELEE
+    damage: 7.25
+    crit_rate: 0.05
+    max_upgrade: 15
 BOW:
   type: WEAPON
-  damage: 6.0
+  material: BOW
+  name: "Bow"
+  mod:
+    sub: RANGED
+    damage: 6.0
+    crit_damage: 125
+    max_upgrade: 20
+PEDANG_LOREM_IPSUM:
+  type: WEAPON
+  material: IRON_SWORD
+  name: "Pedang Lorem Ipsum"
+  mod:
+    sub: MELEE
+    damage: 30.15
+    magic_damage: 27.3
+    proj_damage: 27.9
+    crit_rate: 0.069
+    crit_damage: 20
+    ppen: 45
+    mana: 200
+    mpen: 54
+    health: 20
+    def: 67
+    mdef: 73.2
+    str: 2
+    crit: 3
+    int: 4
+    vit: 5
+    max_upgrade: 12
+  lore:
+    - "Lorem ipsum dolor sit amet, consectetuer"
+    - "adipiscing elit, sed diam nonummy nibh"
+    - "euismod tincidunt ut laoreet dolore magna"

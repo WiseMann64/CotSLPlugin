@@ -7,3 +7,5 @@ website: https://github.com/WiseMann64
 commands:
   test:
     description: test command
+  item:
+    description: get item

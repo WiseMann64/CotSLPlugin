@@ -1,5 +1,6 @@
 package me.wisemann64.soulland;
 
+import me.wisemann64.soulland.commands.ItemCommand;
 import me.wisemann64.soulland.commands.TestCommand;
 import me.wisemann64.soulland.items.ItemManager;
 import me.wisemann64.soulland.listeners.InventoryClick;
@@ -32,6 +33,7 @@ public final class SoulLand extends JavaPlugin {
 
         // Commands registration
         getCommand("test").setExecutor(new TestCommand());
+        getCommand("item").setExecutor(new ItemCommand());
 
         // Events Registration
         PluginManager pm = getServer().getPluginManager();
