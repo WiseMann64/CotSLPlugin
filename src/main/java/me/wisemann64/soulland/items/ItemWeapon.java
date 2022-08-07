@@ -172,27 +172,38 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
         return modifiers;
     }
 
+    @Override
     public boolean hasSlot() {
         return hasSlot;
     }
 
+    @Override
     public void setSlotted(boolean hasSlot) {
         this.hasSlot = hasSlot;
     }
 
+    @Override
     public String getPowerStone() {
         return power;
     }
 
+    @Override
     public void setPowerStone(String powerStone) {
         this.power = powerStone;
     }
 
+    @Override
     public int getUpgradeLevel() {
         return upgrade;
     }
 
+    @Override
     public void setUpgradeLevel(int upgrade) {
         this.upgrade = upgrade;
+    }
+
+    @Override
+    public int getMaxUpgradeLevel() {
+        return maxUpgrade;
     }
 }
