@@ -29,6 +29,11 @@ public class PlayerConfigManager {
         return file.exists() ? YamlConfiguration.loadConfiguration(file) : YamlConfiguration.loadConfiguration(TEMPLATE);
     }
 
+    public static File getFile(@NotNull SLPlayer player) {
+        UUID uuid = player.getUUID();
+        return new File(SoulLand.getPlugin().getDataFolder().getPath() + "/players/" + uuid +".yml");
+    }
+
     public static void saveData(SLPlayer player) {
         UUID uuid = player.getUUID();
         YamlConfiguration yaml = player.getConfig();

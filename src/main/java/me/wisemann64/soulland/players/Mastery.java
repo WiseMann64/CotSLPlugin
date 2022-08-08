@@ -6,17 +6,11 @@ import java.util.Map;
 public class Mastery {
 
     private final SLPlayer owner;
-    private int xp;
-    private int level;
+    private int xp = 0;
+    private int level = 0;
 
     public Mastery(SLPlayer owner) {
         this.owner = owner;
-        /*
-        xp
-        level
-         */
-        xp = 0;
-        level = 0;
     }
 
     public void addXp(int count) {
@@ -34,6 +28,11 @@ public class Mastery {
 
     private void checkLevel() {
 
+    }
+
+    void initialize(int xp, int level) {
+        this.xp = xp;
+        this.level = level;
     }
 
     private static final Map<Integer, Integer> LEVEL_UP = levelUpRequirements();

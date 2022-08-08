@@ -28,15 +28,16 @@ public class StatsMenu extends Menu {
         for (int i : panes) stats.setItem(i,Menu.PANE);
 
         stats.setItem(10,grabStats(Stats.ATK));
-        stats.setItem(11,grabStats(Stats.MATK));
-        stats.setItem(12,grabStats(Stats.MAX_HEALTH));
-        stats.setItem(13,grabStats(Stats.MAX_MANA));
-        stats.setItem(14,grabStats(Stats.DEF));
-        stats.setItem(15,grabStats(Stats.MDEF));
-        stats.setItem(16,grabStats(Stats.CRIT_DAMAGE));
-        stats.setItem(19,grabStats(Stats.CRIT_RATE));
-        stats.setItem(20,grabStats(Stats.PEN));
-        stats.setItem(21,grabStats(Stats.MPEN));
+        stats.setItem(11,grabStats(Stats.RATK));
+        stats.setItem(12,grabStats(Stats.MATK));
+        stats.setItem(13,grabStats(Stats.MAX_HEALTH));
+        stats.setItem(14,grabStats(Stats.MAX_MANA));
+        stats.setItem(15,grabStats(Stats.DEF));
+        stats.setItem(16,grabStats(Stats.MDEF));
+        stats.setItem(19,grabStats(Stats.CRIT_DAMAGE));
+        stats.setItem(20,grabStats(Stats.CRIT_RATE));
+        stats.setItem(21,grabStats(Stats.PEN));
+        stats.setItem(22,grabStats(Stats.MPEN));
 
         stats.setItem(48,Menu.BACK);
         stats.setItem(49,Menu.CLOSE);
@@ -66,6 +67,7 @@ public class StatsMenu extends Menu {
             case MDEF -> Material.TOTEM_OF_UNDYING;
             case PEN -> Material.ARROW;
             case MPEN -> Material.SPECTRAL_ARROW;
+            case RATK -> Material.BOW;
             default -> Material.STONE;
         };
         ItemStack ret = new ItemStack(mat);
@@ -75,6 +77,7 @@ public class StatsMenu extends Menu {
             case MAX_MANA -> "&b";
             case ATK -> "&4";
             case MATK -> "&3";
+            case RATK -> "&2";
             case CRIT_RATE, CRIT_DAMAGE -> "&9";
             case DEF -> "&a";
             case MDEF -> "&d";
@@ -88,6 +91,7 @@ public class StatsMenu extends Menu {
             case MAX_HEALTH -> List.of("&7Measures how much damage","&7you can take before dying.");
             case MAX_MANA -> List.of("&7Measures how many magic you","&7can use for a short period.");
             case ATK -> List.of("&7Your attacks will become","&7more powerful when your","&7ATK increases.");
+            case RATK -> List.of("&7Your arrow attacks will become","&7more powerful when your","&7ATK increases.");
             case MATK -> List.of("&7Your magic attacks will","&7become more powerful when","&7your MATK increases.");
             case CRIT_RATE -> List.of("&7Chance of your attack","&7become critical attack,","&7dealing extra damage.");
             case CRIT_DAMAGE -> List.of("&7Extra damage when critical","&7attack is dealt.");

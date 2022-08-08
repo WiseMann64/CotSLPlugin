@@ -17,7 +17,7 @@ public enum Stats {
     MDEF(13,"Magic Defense",Type.STATS),
     PEN(14,"Physical Penetration",Type.STATS),
     MPEN(15,"Magic Penetration",Type.STATS),
-
+    RATK(16,"Ranged Attack Power",Type.STATS),
     ;
     public final String DISPLAY;
     public final int ID;

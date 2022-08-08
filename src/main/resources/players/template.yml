@@ -1,0 +1,17 @@
+name: WiseMann64
+uuid: null
+timestamp: 696969
+debug: false
+last_hp: 20.0
+last_mana: 100.0
+last_absorption:
+  amount: 0.0
+  duration: 0
+attributes:
+  str: 0
+  crit: 0
+  vit: 0
+  int: 0
+mastery:
+  xp: 0
+  level: 0

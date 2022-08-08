@@ -27,7 +27,7 @@ BOW:
   name: "Bow"
   mod:
     sub: RANGED
-    damage: 6.0
+    proj_damage: 6.0
     crit_damage: 125
     max_upgrade: 20
 PEDANG_LOREM_IPSUM:

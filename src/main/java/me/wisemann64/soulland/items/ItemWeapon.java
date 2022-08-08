@@ -115,10 +115,7 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
             double base = modifiers.get(v);
             StringBuilder sb = new StringBuilder(v.getDisplay());
             sb.insert(2,"• ");
-            sb.append(": &7");
-            switch(v) {
-                case DAMAGE,PROJECTILE_DAMAGE,MAGIC_DAMAGE -> sb.append("+");
-            }
+            sb.append(": &7+");
             switch (v) {
                 case STR,CRIT,INT,VIT -> sb.append(Math.round(base));
                 case CRITICAL_RATE -> sb.append(Math.round(10000*base)/100D).append("%");

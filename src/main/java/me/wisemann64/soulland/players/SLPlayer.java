@@ -3,21 +3,31 @@ package me.wisemann64.soulland.players;
 import me.wisemann64.soulland.PlayerConfigManager;
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.Utils;
+import me.wisemann64.soulland.items.ItemAbstract;
+import me.wisemann64.soulland.items.ItemModifiable;
+import me.wisemann64.soulland.items.ItemModifiers;
 import me.wisemann64.soulland.items.SLItems;
 import me.wisemann64.soulland.menu.Menu;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
+
+import static me.wisemann64.soulland.items.SLItems.key;
 
 public class SLPlayer {
 
@@ -26,9 +36,14 @@ public class SLPlayer {
     private final UUID uuid;
     private PlayerAttributes attributes;
     private Mastery mastery;
-    private boolean debugMode;
+    private boolean debugMode = false;
 
-    private BukkitRunnable tickAction;
+    private final BukkitRunnable tickAction = new BukkitRunnable() {
+        @Override
+        public void run() {
+            tick();
+        }
+    };;
 
     private boolean abmInterrupt = false;
     private String abmIMessage = "";
@@ -40,26 +55,58 @@ public class SLPlayer {
         handle = player;
         uuid = handle.getUniqueId();
         config = PlayerConfigManager.getData(handle);
-        readData();
-//        if (!PlayerConfigManager.hasData(handle)) createData();
-//        else readData();
-        mastery = new Mastery(this);
 
+        mastery = new Mastery(this);
         attributes = new PlayerAttributes(this);
 
-        tickAction = new BukkitRunnable() {
-            @Override
-            public void run() {
-                tick();
-            }
-        };
-        tickAction.runTaskTimer(SoulLand.getPlugin(),0L,1L);
+        if (!PlayerConfigManager.hasData(handle)) createData();
+        else readData();
 
-        debugMode = false;
+        tickAction.runTaskTimer(SoulLand.getPlugin(),0L,1L);
+    }
+
+    private void createData() {
+        mastery.initialize(0,0);
+        attributes.initialize(0,0,0,0);
+        saveData();
     }
 
     private void readData() {
+        debugMode = config.getBoolean("debug");
+        attributes.setHealth(config.getDouble("last_hp",20));
+        attributes.setMana(config.getDouble("last_mana",100));
+        absorptionDuration = config.getInt("last_absorption.duration",0);
+        absorptionAmount = config.getDouble("last_absorption.amount",0);
+        int str = config.getInt("attributes.str");
+        int crit = config.getInt("attributes.crit");
+        int vit = config.getInt("attributes.vit");
+        int in = config.getInt("attributes.int");
+        attributes.initialize(vit,in,str,crit);
+        int xp = config.getInt("mastery.xp");
+        int level = config.getInt("mastery.level");
+        mastery.initialize(xp,level);
+    }
 
+    private void saveData() {
+        config.set("name",handle.getName());
+        config.set("uuid",handle.getUniqueId().toString());
+        config.set("timestamp",System.currentTimeMillis());
+        config.set("debug",debugMode);
+        config.set("last_hp",attributes.getHealth());
+        config.set("last_mana",attributes.getMana());
+        config.set("last_absorption.amount",absorptionAmount);
+        config.set("last_absorption.duration",absorptionDuration);
+        config.set("attributes.str",attributes.getAttribute(Stats.STR));
+        config.set("attributes.crit",attributes.getAttribute(Stats.CRIT));
+        config.set("attributes.vit",attributes.getAttribute(Stats.VIT));
+        config.set("attributes.int",attributes.getAttribute(Stats.INT));
+        config.set("mastery.xp",getXp());
+        config.set("mastery.level",getLevel());
+        try {
+            config.save(PlayerConfigManager.getFile(this));
+        } catch (IOException e) {
+            System.err.println("Couldn't save config for player with uuid " + getUUID());
+        }
     }
 
     public void onJoin() {
@@ -109,6 +156,7 @@ public class SLPlayer {
         reduceABMInterrupt();
         syncHealth();
         absorptionTick();
+        xpTick();
     }
 
     public void logout() {
@@ -118,10 +166,6 @@ public class SLPlayer {
             System.err.println("Failed to stop tickAction from player with uuid " + uuid);
         }
         saveData();
-    }
-
-    private void saveData() {
-
     }
 
     public Player getHandle() {
@@ -169,13 +213,18 @@ public class SLPlayer {
     public boolean hasAbsorption() {
         return absorptionDuration > 0 && absorptionAmount > 0;
     }
-    public void absorptionTick() {
+    private void absorptionTick() {
         absorptionDuration = absorptionDuration == 0 ? 0 : absorptionDuration-1;
         if (absorptionDuration == 0) absorptionAmount = 0;
         if (absorptionAmount <= 0) absorptionDuration = 0;
 
         if (hasAbsorption()) handle.setAbsorptionAmount((int) Math.round(40D*absorptionAmount/getMaxHealth()));
         else handle.setAbsorptionAmount(0);
+    }
+
+    private void xpTick() {
+        handle.setExp(0.4F);
+        handle.setLevel(getLevel());
     }
 
     public void heal(double amount) {
@@ -196,7 +245,7 @@ public class SLPlayer {
     }
 
     public float getHealthFraction() {
-        return (float) (getHealth()/getMaxHealth());
+        return Math.min((float) (getHealth()/getMaxHealth()),1.0F);
     }
 
     public double getMana() {
@@ -222,13 +271,52 @@ public class SLPlayer {
     public PlayerAttributes getAttributes() {
         return attributes;
     }
-
+    public PersistentDataContainer getCalculatedContainer(EnumItemSlot slot) {
+        String apply = switch(slot) {
+            case MAINHAND -> "main";
+            case OFFHAND -> "offhand";
+            default -> "armor";
+        };
+        ItemStack it = switch(slot) {
+            case MAINHAND -> handle.getInventory().getItemInMainHand();
+            case OFFHAND -> handle.getInventory().getItemInOffHand();
+            case HEAD -> handle.getInventory().getHelmet();
+            case CHEST -> handle.getInventory().getChestplate();
+            case LEGS -> handle.getInventory().getLeggings();
+            case FEET -> handle.getInventory().getBoots();
+            };
+        if (it == null) return null;
+        ItemMeta meta = it.getItemMeta();
+        if (meta == null) return null;
+        PersistentDataContainer p1 = meta.getPersistentDataContainer();
+        PersistentDataContainer p2 = p1.get(key("modifiable"),PersistentDataType.TAG_CONTAINER);
+        if (p2 == null) return null;
+        String apply1 = p2.getOrDefault(key("apply"),PersistentDataType.STRING,"");
+        if (!apply1.equals(apply)) return null;
+        return p2.get(key("calculated"),PersistentDataType.TAG_CONTAINER);
+    }
     public double getMainHandATK() {
-        return 1.0;
+        try {
+            return getCalculatedContainer(EnumItemSlot.MAINHAND).get(key("damage"),PersistentDataType.DOUBLE);
+        } catch (NullPointerException ex) {
+            return 0;
+        }
     }
 
     public double getMainHandMATK() {
-        return 1.0;
+        try {
+            return getCalculatedContainer(EnumItemSlot.MAINHAND).get(key("magic_damage"),PersistentDataType.DOUBLE);
+        } catch (NullPointerException ex) {
+            return 0;
+        }
+    }
+
+    public double getMainHandRATK() {
+        try {
+            return getCalculatedContainer(EnumItemSlot.MAINHAND).get(key("proj_damage"),PersistentDataType.DOUBLE);
+        } catch (NullPointerException ex) {
+            return 0;
+        }
     }
 
     @Override
