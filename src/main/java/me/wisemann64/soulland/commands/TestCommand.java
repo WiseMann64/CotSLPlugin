@@ -2,10 +2,13 @@ package me.wisemann64.soulland.commands;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.Utils;
+import me.wisemann64.soulland.combat.Damage;
+import me.wisemann64.soulland.combat.DamageType;
 import me.wisemann64.soulland.items.ItemAbstract;
 import me.wisemann64.soulland.items.ItemWeapon;
 import me.wisemann64.soulland.items.SLItems;
 import me.wisemann64.soulland.players.SLPlayer;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -83,14 +86,11 @@ public class TestCommand implements TabExecutor {
                 ItemStack i = pl.getInventory().getItemInMainHand();
                 pl.getInventory().addItem(ItemAbstract.fromItem(i).toItem());
             }
-            case "slot" -> {
-                ItemStack i = pl.getInventory().getItemInMainHand();
-                ItemAbstract j = ItemAbstract.fromItem(i);
-                if (j instanceof ItemWeapon k) {
-                    k.setSlotted(true);
-                    k.setUpgradeLevel(7);
-                }
-                pl.getInventory().setItemInMainHand(j.toItem());
+            case "damage" -> {
+                double in = NumberUtils.toDouble(strings[1],0);
+                double pen = NumberUtils.toDouble(strings[2],0);
+                Damage d = new Damage(in,DamageType.PHYSICAL,pen,true);
+                p.sendMessage(String.valueOf(p.dealDamage(d)));
             }
         }
         return false;

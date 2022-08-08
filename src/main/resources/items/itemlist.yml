@@ -56,3 +56,30 @@ PEDANG_LOREM_IPSUM:
     - "Lorem ipsum dolor sit amet, consectetuer"
     - "adipiscing elit, sed diam nonummy nibh"
     - "euismod tincidunt ut laoreet dolore magna"
+TAMENG_BATU:
+  type: WEAPON
+  material: EMERALD
+  name: "Tameng Batu"
+  mod:
+    sub: MELEE
+    damage: 420.69
+    magic_damage: 69.420
+    health: 125
+    def: 2400
+    max_upgrade: 5
+  lore:
+    - "&oTameng Batu Ngab!!1!1!1"
+LOREM:
+  type: WEAPON
+  material: STONE
+  name: "Lorem"
+  mod:
+    sub: MELEE
+    def: 400
+IPSUM:
+  type: WEAPON
+  material: STONE
+  name: "Ipsum"
+  mod:
+    sub: MELEE
+    def: 500

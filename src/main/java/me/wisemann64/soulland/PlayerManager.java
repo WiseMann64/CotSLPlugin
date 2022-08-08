@@ -96,14 +96,7 @@ public class PlayerManager implements Listener {
         if (res == EntityRegainHealthEvent.RegainReason.CUSTOM || res == EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL ||
                 res == EntityRegainHealthEvent.RegainReason.WITHER || res == EntityRegainHealthEvent.RegainReason.WITHER_SPAWN) return;
         p.heal(v.getAmount());
-    }
-
-    @EventHandler
-    public void event(EntityDamageEvent v) {
-        SLPlayer p = SoulLand.getPlayerManager().getPlayer(v.getEntity().getUniqueId());
-        if (p == null) return;
-        p.damage(v.getDamage());
-        v.setDamage(0);
+        v.setAmount(0);
     }
 
     @EventHandler

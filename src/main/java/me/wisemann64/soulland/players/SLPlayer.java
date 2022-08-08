@@ -3,20 +3,21 @@ package me.wisemann64.soulland.players;
 import me.wisemann64.soulland.PlayerConfigManager;
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.Utils;
-import me.wisemann64.soulland.items.ItemAbstract;
-import me.wisemann64.soulland.items.ItemModifiable;
-import me.wisemann64.soulland.items.ItemModifiers;
+import me.wisemann64.soulland.combat.CombatEntity;
+import me.wisemann64.soulland.combat.Damage;
 import me.wisemann64.soulland.items.SLItems;
 import me.wisemann64.soulland.menu.Menu;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,11 +26,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static me.wisemann64.soulland.items.SLItems.key;
 
-public class SLPlayer {
+public class SLPlayer implements CombatEntity {
 
     private final Player handle;
     private YamlConfiguration config;
@@ -37,6 +41,7 @@ public class SLPlayer {
     private PlayerAttributes attributes;
     private Mastery mastery;
     private boolean debugMode = false;
+    private final EnumMap<EntityDamageEvent.DamageCause,Integer> envDamageCooldown = new EnumMap<>(EntityDamageEvent.DamageCause.class);
 
     private final BukkitRunnable tickAction = new BukkitRunnable() {
         @Override
@@ -134,7 +139,8 @@ public class SLPlayer {
     }
 
     private void syncHealth() {
-        handle.setHealth(Math.max(1,Math.ceil(getHealthFraction()*40)));
+        if (getHealth() > getMaxHealth()) setHealth(getMaxHealth());
+        handle.setHealth(Math.max(1,Math.floor(getHealthFraction()*40)));
     }
 
     private String parseString(String s) {
@@ -157,6 +163,17 @@ public class SLPlayer {
         syncHealth();
         absorptionTick();
         xpTick();
+        cooldownTick();
+    }
+
+    private void cooldownTick() {
+        handle.setMaximumNoDamageTicks(0);
+        handle.setNoDamageTicks(0);
+        for (DamageCause v : envDamageCooldown.keySet()) {
+            int cd = envDamageCooldown.get(v)-1;
+            if (cd == 0) envDamageCooldown.remove(v);
+            else envDamageCooldown.put(v,cd);
+        }
     }
 
     public void logout() {
@@ -188,18 +205,6 @@ public class SLPlayer {
         return mastery.getLevel();
     }
 
-    public double getHealth() {
-        return attributes.getHealth();
-    }
-
-    public void setHealth(double amount) {
-        attributes.setHealth(Math.max(0,Math.min(amount,getMaxHealth())));
-    }
-
-    public double getMaxHealth() {
-        return attributes.getMaxHealth();
-    }
-
     private double absorptionAmount = 0;
     private int absorptionDuration = 0;
     public void setAbsorption(double amount, int duration /*tick*/) {
@@ -217,6 +222,7 @@ public class SLPlayer {
         absorptionDuration = absorptionDuration == 0 ? 0 : absorptionDuration-1;
         if (absorptionDuration == 0) absorptionAmount = 0;
         if (absorptionAmount <= 0) absorptionDuration = 0;
+        if (absorptionAmount > getMaxHealth()) absorptionAmount = getMaxHealth();
 
         if (hasAbsorption()) handle.setAbsorptionAmount((int) Math.round(40D*absorptionAmount/getMaxHealth()));
         else handle.setAbsorptionAmount(0);
@@ -231,7 +237,8 @@ public class SLPlayer {
         setHealth(getHealth() + amount);
     }
 
-    public void damage(double amount) {
+    public double dealDamage(double amount) {
+        double val0 = amount;
         if (hasAbsorption()) {
             if (absorptionAmount > amount) {
                 absorptionAmount -= amount;
@@ -242,10 +249,48 @@ public class SLPlayer {
             }
         }
         setHealth(getHealth() - amount);
+        return val0;
     }
-
+    public Location getLocation() {
+        return handle.getLocation();
+    }
+    public Location getEyeLocation() {
+        return handle.getEyeLocation();
+    }
+    public boolean isInvis() {
+        return false;
+    }
+    public double getHealth() {
+        return attributes.getHealth();
+    }
+    public void setHealth(double amount) {
+        attributes.setHealth(Math.max(0,Math.min(amount,getMaxHealth())));
+    }
+    public double getMaxHealth() {
+        return attributes.getMaxHealth();
+    }
     public float getHealthFraction() {
         return Math.min((float) (getHealth()/getMaxHealth()),1.0F);
+    }
+    public double getAttackPower(){
+        return attributes.getStats(Stats.ATK);
+    }
+    public double getMagicAttackPower(){
+        return attributes.getStats(Stats.MATK);
+    }
+    public double getDefense(){
+        double d = attributes.getStats(Stats.DEF);
+        return Math.min(1000,Math.max(-300,d));
+    }
+    public double getMagicDefense(){
+        double d = attributes.getStats(Stats.MDEF);
+        return Math.min(1000,Math.max(-300,d));
+    }
+    public double getPhysicalPEN(){
+        return attributes.getStats(Stats.PEN);
+    }
+    public double getMagicPEN(){
+        return attributes.getStats(Stats.MPEN);
     }
 
     public double getMana() {
@@ -317,6 +362,10 @@ public class SLPlayer {
         } catch (NullPointerException ex) {
             return 0;
         }
+    }
+
+    public EnumMap<EntityDamageEvent.DamageCause, Integer> getEnvDamageCooldown() {
+        return envDamageCooldown;
     }
 
     @Override

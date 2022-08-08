@@ -1,13 +1,21 @@
 package me.wisemann64.soulland;
 
+import me.wisemann64.soulland.combat.CombatEntity;
+import me.wisemann64.soulland.combat.CombatListeners;
 import me.wisemann64.soulland.commands.ItemCommand;
 import me.wisemann64.soulland.commands.TestCommand;
 import me.wisemann64.soulland.items.ItemManager;
 import me.wisemann64.soulland.listeners.InventoryClick;
 import me.wisemann64.soulland.listeners.PlayerListeners;
+import me.wisemann64.soulland.players.SLPlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public final class SoulLand extends JavaPlugin {
 
@@ -18,7 +26,7 @@ public final class SoulLand extends JavaPlugin {
     private GameManager gameManager;
     private BukkitRunnable pluginTick;
 
-
+    private final static List<BukkitTask> asyncTasks = new ArrayList<>();
     @Override
     public void onEnable() {
         plugin = this;
@@ -39,6 +47,7 @@ public final class SoulLand extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new InventoryClick(),this);
         pm.registerEvents(new PlayerListeners(), this);
+        pm.registerEvents(new CombatListeners(), this);
     }
 
     @Override
@@ -79,5 +88,15 @@ public final class SoulLand extends JavaPlugin {
     }
     public static ItemManager getItemManager() {
         return itemManager;
+    }
+    public static List<BukkitTask> getAsyncTasks() {
+        return asyncTasks;
+    }
+    public static CombatEntity getCombatEntity(UUID uuid) {
+        SLPlayer a = playerManager.getPlayer(uuid);
+        if (a != null) return a;
+        SLPlayer b = null;
+        // TODO BIKIN ENEMY ENTITY
+        return b;
     }
 }

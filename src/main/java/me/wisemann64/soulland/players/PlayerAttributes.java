@@ -129,7 +129,7 @@ public class PlayerAttributes {
         // DEFENSE
         stat = 0;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("def"), PersistentDataType.DOUBLE,0.0);
-        setStats(Stats.DEF,stat);
+        setStats(Stats.DEF,Math.max(-300,Math.min(stat,1000)));
 
         // MAGIC DEFENSE
         stat = 0;
