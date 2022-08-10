@@ -7,9 +7,13 @@ import me.wisemann64.soulland.combat.DamageType;
 import me.wisemann64.soulland.items.ItemAbstract;
 import me.wisemann64.soulland.items.ItemWeapon;
 import me.wisemann64.soulland.items.SLItems;
+import me.wisemann64.soulland.mobs.MobCreeper;
+import me.wisemann64.soulland.mobs.MobZombie;
 import me.wisemann64.soulland.players.SLPlayer;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -27,7 +31,7 @@ import java.util.List;
 
 public class TestCommand implements TabExecutor {
 
-    private String[] args = {"item","ping","item2","item3","slot"};
+    private String[] args = {"item","ping","item2","item3","slot","damage","zombie"};
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -91,6 +95,14 @@ public class TestCommand implements TabExecutor {
                 double pen = NumberUtils.toDouble(strings[2],0);
                 Damage d = new Damage(in,DamageType.PHYSICAL,pen,true);
                 p.sendMessage(String.valueOf(p.dealDamage(d)));
+            }
+            case "zombie" -> {
+                Location l = p.getHandle().getLocation();
+                new MobZombie(l.getWorld(),"Agus").spawn(l);
+            }
+            case "creeper" -> {
+                Location l = p.getHandle().getLocation();
+                new MobCreeper(l.getWorld(),"Kripeng").spawn(l);
             }
         }
         return false;

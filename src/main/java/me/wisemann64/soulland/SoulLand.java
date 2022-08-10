@@ -7,6 +7,7 @@ import me.wisemann64.soulland.commands.TestCommand;
 import me.wisemann64.soulland.items.ItemManager;
 import me.wisemann64.soulland.listeners.InventoryClick;
 import me.wisemann64.soulland.listeners.PlayerListeners;
+import me.wisemann64.soulland.mobs.SLMob;
 import me.wisemann64.soulland.players.SLPlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,7 @@ public final class SoulLand extends JavaPlugin {
 
     private static SoulLand plugin;
     private static PlayerManager playerManager;
+    private static MobManager mobManager;
     private static ItemManager itemManager;
 
     private GameManager gameManager;
@@ -38,6 +40,8 @@ public final class SoulLand extends JavaPlugin {
         getServer().getPluginManager().registerEvents(playerManager, this);
         gameManager = new GameManager(this);
         runTick();
+
+        mobManager = new MobManager();
 
         // Commands registration
         getCommand("test").setExecutor(new TestCommand());
@@ -89,14 +93,15 @@ public final class SoulLand extends JavaPlugin {
     public static ItemManager getItemManager() {
         return itemManager;
     }
+    public static MobManager getMobManager() {
+        return mobManager;
+    }
     public static List<BukkitTask> getAsyncTasks() {
         return asyncTasks;
     }
     public static CombatEntity getCombatEntity(UUID uuid) {
         SLPlayer a = playerManager.getPlayer(uuid);
         if (a != null) return a;
-        SLPlayer b = null;
-        // TODO BIKIN ENEMY ENTITY
-        return b;
+        return mobManager.getMob(uuid);
     }
 }

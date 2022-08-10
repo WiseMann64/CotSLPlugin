@@ -5,6 +5,7 @@ import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.Utils;
 import me.wisemann64.soulland.combat.CombatEntity;
 import me.wisemann64.soulland.combat.Damage;
+import me.wisemann64.soulland.combat.DamageType;
 import me.wisemann64.soulland.items.SLItems;
 import me.wisemann64.soulland.menu.Menu;
 import net.md_5.bungee.api.ChatMessageType;
@@ -26,11 +27,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+import static me.wisemann64.soulland.items.SLItems.hideAllFlags;
 import static me.wisemann64.soulland.items.SLItems.key;
 
 public class SLPlayer implements CombatEntity {
@@ -144,6 +143,7 @@ public class SLPlayer implements CombatEntity {
     }
 
     private String parseString(String s) {
+        if (s.contains("%health")) s = s.replace("%health",String.valueOf(Math.round(attributes.getHealth())));
         if (s.contains("%health")) s = s.replace("%health",String.valueOf(Math.round(attributes.getHealth())));
         if (s.contains("%maxHealth")) s = s.replace("%maxHealth",String.valueOf(Math.round(attributes.getMaxHealth())));
         if (s.contains("%mana")) s = s.replace("%mana",String.valueOf(Math.round(attributes.getMana())));
@@ -274,6 +274,16 @@ public class SLPlayer implements CombatEntity {
     }
     public double getAttackPower(){
         return attributes.getStats(Stats.ATK);
+    }
+    private boolean drawCrit() {
+        Random r = new Random();
+        return r.nextDouble() < attributes.getStats(Stats.CRIT_RATE);
+    }
+    public Damage basicAttack() {
+        boolean crit = drawCrit();
+        double cd = crit ? 1 + attributes.getStats(Stats.CRIT_DAMAGE)/100 : 1;
+        double dmg = getAttackPower() * (1 + 0.01*attributes.getStats(Stats.STR))*cd;
+        return new Damage(dmg, DamageType.PHYSICAL,getPhysicalPEN(),crit);
     }
     public double getMagicAttackPower(){
         return attributes.getStats(Stats.MATK);

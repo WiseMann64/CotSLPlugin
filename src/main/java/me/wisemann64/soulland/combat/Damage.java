@@ -5,7 +5,7 @@ public class Damage {
     private final double oldValue;
     private double newValue;
     private final DamageType type;
-    private final double penetration;
+    private double penetration;
     private final boolean crit;
 
     public Damage(double value, DamageType type, double penetration, boolean crit) {
@@ -38,5 +38,9 @@ public class Damage {
 
     public void setNewValue(double newValue) {
         this.newValue = newValue;
+    }
+
+    public void addPen(int toAdd) {
+        penetration += toAdd;
     }
 }

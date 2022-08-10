@@ -2,6 +2,7 @@ package me.wisemann64.soulland.combat;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.Utils;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -24,12 +25,14 @@ public interface CombatEntity {
     double getMagicDefense();
     double getPhysicalPEN();
     double getMagicPEN();
+    int getLevel();
     Location getLocation();
     Location getEyeLocation();
     void setHealth(double health);
     void heal(double amount);
     double dealDamage(double finalDamage);
     Entity getHandle();
+    void sendMessage(String msg);
     EnumMap<EntityDamageEvent.DamageCause, Integer> getEnvDamageCooldown();
     default double dealDamage(Damage damage) {
         double def = switch (damage.getType()) {
@@ -49,7 +52,7 @@ public interface CombatEntity {
         Random random = new Random();
         loc.add(1.4*random.nextDouble()-0.7,0.6*random.nextDouble()-0.8,1.4*random.nextDouble()-0.7);
         StringBuilder value = new StringBuilder(damage.isCrit() ? damage.getType().getAlternateColor() + "✧" : damage.getType().getColor());
-        value.append(Math.round(damage.getNewValue()));
+        value.append(String.format("%.2f",damage.getNewValue()));
         if (damage.isCrit()) value.append("✧");
         ArmorStand label = loc.getWorld().spawn(loc,ArmorStand.class, e -> {
             e.setVisible(false);
