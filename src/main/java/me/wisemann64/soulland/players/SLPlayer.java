@@ -285,8 +285,17 @@ public class SLPlayer implements CombatEntity {
         double dmg = getAttackPower() * (1 + 0.01*attributes.getStats(Stats.STR))*cd;
         return new Damage(dmg, DamageType.PHYSICAL,getPhysicalPEN(),crit);
     }
+    public Damage arrowAttack(boolean arrowCrit) {
+        boolean crit = drawCrit() && arrowCrit;
+        double cd = crit ? 1 + attributes.getStats(Stats.CRIT_DAMAGE)/100 : 1;
+        double dmg = getRangedAttackPower() * (1 + 0.01*attributes.getStats(Stats.STR))*cd;
+        return new Damage(dmg, DamageType.PHYSICAL,getPhysicalPEN(),crit);
+    }
     public double getMagicAttackPower(){
         return attributes.getStats(Stats.MATK);
+    }
+    public double getRangedAttackPower() {
+        return attributes.getStats(Stats.RATK);
     }
     public double getDefense(){
         double d = attributes.getStats(Stats.DEF);

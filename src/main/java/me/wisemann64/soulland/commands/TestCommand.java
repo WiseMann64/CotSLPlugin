@@ -8,6 +8,7 @@ import me.wisemann64.soulland.items.ItemAbstract;
 import me.wisemann64.soulland.items.ItemWeapon;
 import me.wisemann64.soulland.items.SLItems;
 import me.wisemann64.soulland.mobs.MobCreeper;
+import me.wisemann64.soulland.mobs.MobSkeleton;
 import me.wisemann64.soulland.mobs.MobZombie;
 import me.wisemann64.soulland.players.SLPlayer;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class TestCommand implements TabExecutor {
 
-    private String[] args = {"item","ping","item2","item3","slot","damage","zombie"};
+    private String[] args = {"item","ping","item2","item3","slot","damage","zombie","creeper","skeleton"};
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -103,6 +104,10 @@ public class TestCommand implements TabExecutor {
             case "creeper" -> {
                 Location l = p.getHandle().getLocation();
                 new MobCreeper(l.getWorld(),"Kripeng").spawn(l);
+            }
+            case "skeleton" -> {
+                Location l = p.getHandle().getLocation();
+                new MobSkeleton(l.getWorld(),"SkelSeton").spawn(l);
             }
         }
         return false;

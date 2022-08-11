@@ -3,6 +3,7 @@ package me.wisemann64.soulland.items;
 import me.wisemann64.soulland.SoulLand;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -77,5 +78,9 @@ public class SLItems {
         ItemMeta meta = item.getItemMeta();
         for (ItemFlag v : ItemFlag.values()) meta.addItemFlags(v);
         item.setItemMeta(meta);
+    }
+
+    public static net.minecraft.server.v1_16_R3.ItemStack nms(ItemStack from) {
+        return CraftItemStack.asNMSCopy(from);
     }
 }

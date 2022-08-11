@@ -21,6 +21,7 @@ public interface CombatEntity {
     float getHealthFraction();
     double getAttackPower();
     double getMagicAttackPower();
+    double getRangedAttackPower();
     double getDefense();
     double getMagicDefense();
     double getPhysicalPEN();

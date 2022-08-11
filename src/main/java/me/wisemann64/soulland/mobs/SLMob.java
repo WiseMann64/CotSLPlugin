@@ -8,7 +8,6 @@ import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.time.DurationFormatUtils;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Entity;
@@ -168,6 +167,9 @@ public abstract class SLMob implements CombatEntity {
     public double getMagicAttackPower() {
         return attributes.getMagicAttack();
     }
+    public double getRangedAttackPower() {
+        return getAttackPower();
+    }
     public double getDefense() {
         return attributes.getDefense();
     }
@@ -189,7 +191,7 @@ public abstract class SLMob implements CombatEntity {
     }
     public void setHealth(double health) {
         attributes.setHealth(health);
-        if (health < 0) {
+        if (health <= 0) {
             attributes.setHealth(0);
             handle.getBukkitEntity().setCustomName(parseTag(tag));
             die();

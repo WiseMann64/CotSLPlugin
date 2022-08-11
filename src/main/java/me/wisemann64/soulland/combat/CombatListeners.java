@@ -1,14 +1,23 @@
 package me.wisemann64.soulland.combat;
 
 import me.wisemann64.soulland.SoulLand;
+import me.wisemann64.soulland.Utils;
 import me.wisemann64.soulland.mobs.SLMob;
 import me.wisemann64.soulland.players.SLPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataAdapterContext;
+import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.persistence.PersistentDataAdapterContext;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import static me.wisemann64.soulland.items.SLItems.key;
 
 public class CombatListeners implements Listener {
 
@@ -76,7 +85,7 @@ public class CombatListeners implements Listener {
         v.setDamage(0);
         Entity dam0 = v.getDamager();
         if (dam0 instanceof Arrow a) {
-            damageByArrow(rec,a);
+            damageByArrow(rec,a,v);
             return;
         }
         CombatEntity dam1 = SoulLand.getCombatEntity(dam0.getUniqueId());
@@ -129,7 +138,57 @@ public class CombatListeners implements Listener {
         }
     }
 
-    private void damageByArrow(CombatEntity rec, Arrow a) {
+    @EventHandler
+    public void event(ProjectileLaunchEvent v) {
+        if (!(v.getEntity() instanceof Arrow a)) return;
+        if (!(a.getShooter() instanceof Entity e)) return;
+        CombatEntity c = SoulLand.getCombatEntity(e.getUniqueId());
+        boolean crit = a.isCritical();
+        double damage;
+        String shooter;
+        double pen;
+        int level;
+        if (c instanceof SLPlayer p) {
+            Damage dmg = p.arrowAttack(crit);
+            damage = dmg.getOldValue();
+            shooter = "player";
+            pen = p.getPhysicalPEN();
+            level = p.getLevel();
+            crit = dmg.isCrit();
+        } else if (c instanceof SLMob m) {
+            damage = m.getRangedAttackPower();
+            shooter = "mob";
+            pen = m.getPhysicalPEN();
+            level = m.getLevel();
+        } else {
+            damage = a.getDamage();
+            shooter = "generic";
+            pen = 0;
+            level = 0;
+        }
+        a.getPersistentDataContainer().set(key("arrow_damage"), PersistentDataType.DOUBLE,damage);
+        a.getPersistentDataContainer().set(key("arrow_shooter"), PersistentDataType.STRING,shooter);
+        a.getPersistentDataContainer().set(key("arrow_ppen"), PersistentDataType.DOUBLE,pen);
+        a.getPersistentDataContainer().set(key("arrow_level"), PersistentDataType.INTEGER,level);
+        a.getPersistentDataContainer().set(key("arrow_critical"), PersistentDataType.INTEGER,crit ? 1 : 0);
+    }
 
+    private void damageByArrow(CombatEntity rec, Arrow a, EntityDamageByEntityEvent v) {
+        if (rec.isInvis()) {
+            v.setCancelled(true);
+            return;
+        }
+        double damage = a.getPersistentDataContainer().getOrDefault(key("arrow_damage"),PersistentDataType.DOUBLE,0.0);
+        String shooter = a.getPersistentDataContainer().getOrDefault(key("arrow_shooter"),PersistentDataType.STRING,"generic");
+        double pen = a.getPersistentDataContainer().getOrDefault(key("arrow_ppen"),PersistentDataType.DOUBLE,0.0);
+        int level = a.getPersistentDataContainer().getOrDefault(key("arrow_level"),PersistentDataType.INTEGER,0);
+        boolean crit = a.getPersistentDataContainer().getOrDefault(key("arrow_critical"),PersistentDataType.INTEGER,0) == 1;
+        if (rec instanceof SLPlayer && shooter.equals("player")) {
+            v.setCancelled(true);
+            return;
+        }
+        Damage dmg = new Damage(damage,DamageType.PHYSICAL,pen,crit);
+        dmg.addPen(level-rec.getLevel());
+        rec.dealDamage(dmg);
     }
 }
