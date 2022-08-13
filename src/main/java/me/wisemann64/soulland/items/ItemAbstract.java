@@ -18,6 +18,7 @@ public abstract class ItemAbstract implements Cloneable {
     private final Material material;
     private String name;
     private List<String> lore = null;
+    protected int count = 1;
 
     public ItemAbstract(String id, ItemType type, Material material) {
         this.id = id;
@@ -40,9 +41,10 @@ public abstract class ItemAbstract implements Cloneable {
         String id = SLItems.getId(from);
         ItemType type = ItemType.valueOf(getString(from,"type"));
         ItemAbstract i0 = SoulLand.getItemManager().getItem(id).clone();
+        i0.setCount(from.getAmount());
         switch (type) {
-            case WEAPON -> {
-                ItemWeapon iw = (ItemWeapon) i0;
+            case WEAPON, ARMOR -> {
+                ItemModifiable iw = (ItemModifiable) i0;
                 PersistentDataContainer modifiable = meta.getPersistentDataContainer().get(key("modifiable"), PersistentDataType.TAG_CONTAINER);
                 iw.setUpgradeLevel(modifiable.getOrDefault(key("upgrade"),PersistentDataType.INTEGER,0));
                 int slot = modifiable.getOrDefault(key("slot"),PersistentDataType.INTEGER,0);
@@ -100,5 +102,14 @@ public abstract class ItemAbstract implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public ItemAbstract setCount(int count) {
+        this.count = count;
+        return this;
     }
 }

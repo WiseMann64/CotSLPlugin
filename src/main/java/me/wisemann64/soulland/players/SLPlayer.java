@@ -13,6 +13,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.time.DurationFormatUtils;
@@ -24,12 +25,16 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Random;
+import java.util.UUID;
 
-import static me.wisemann64.soulland.items.SLItems.hideAllFlags;
 import static me.wisemann64.soulland.items.SLItems.key;
 
 public class SLPlayer implements CombatEntity {
@@ -47,7 +52,7 @@ public class SLPlayer implements CombatEntity {
         public void run() {
             tick();
         }
-    };;
+    };
 
     private boolean abmInterrupt = false;
     private String abmIMessage = "";
@@ -264,7 +269,8 @@ public class SLPlayer implements CombatEntity {
         return attributes.getHealth();
     }
     public void setHealth(double amount) {
-        attributes.setHealth(Math.max(0,Math.min(amount,getMaxHealth())));
+        if (amount <= 0) die();
+        else attributes.setHealth(Math.min(amount,getMaxHealth()));
     }
     public double getMaxHealth() {
         return attributes.getMaxHealth();
@@ -385,6 +391,44 @@ public class SLPlayer implements CombatEntity {
 
     public EnumMap<EntityDamageEvent.DamageCause, Integer> getEnvDamageCooldown() {
         return envDamageCooldown;
+    }
+    public void sound(Sound sound, float v, float v1) {
+        handle.playSound(handle.getLocation(),sound,v,v1);
+    }
+    public void sendSound(Sound sound, float v, float v1) {
+        handle.getWorld().playSound(handle.getLocation(),sound,v,v1);
+    }
+    private void die() {
+        sound(Sound.ENTITY_WITHER_SPAWN,1F,1F);
+        setHealth(getMaxHealth());
+        handle.sendTitle("Death Event",null,0,50,10);
+    }
+
+    public EnumMap<Stats,Double> getPotionBoost() {
+        EnumMap<Stats,Double> ret = new EnumMap<>(Stats.class);
+        Collection<PotionEffect> pot = handle.getActivePotionEffects();
+        for (PotionEffect eff : pot) {
+            int level = eff.getAmplifier()+1;
+            if (eff.getType().equals(PotionEffectType.DAMAGE_RESISTANCE)) {
+                ret.put(Stats.DEF,level*40.0);
+                ret.put(Stats.MDEF,level*40.0);
+            }
+            if (eff.getType().equals(PotionEffectType.INCREASE_DAMAGE)) {
+                ret.put(Stats.ATK,level*0.1);
+                ret.put(Stats.RATK,level*0.1);
+                ret.put(Stats.CRIT_RATE,level*0.015);
+                ret.put(Stats.CRIT_DAMAGE,level*7.5);
+            }
+            if (eff.getType().equals(PotionEffectType.WEAKNESS)) {
+                double s = ret.getOrDefault(Stats.ATK,0.0);
+                ret.put(Stats.ATK,s - level*0.1);
+                s = ret.getOrDefault(Stats.RATK,0.0);
+                ret.put(Stats.RATK,s - level*0.1);
+                s = ret.getOrDefault(Stats.CRIT_RATE,0.0);
+                ret.put(Stats.CRIT_RATE,s - level*0.1);
+            }
+        }
+        return ret;
     }
 
     @Override

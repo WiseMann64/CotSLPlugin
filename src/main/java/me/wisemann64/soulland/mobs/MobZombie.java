@@ -4,6 +4,8 @@ import net.minecraft.server.v1_16_R3.WorldServer;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 
+import java.util.List;
+
 public class MobZombie extends SLMob {
 
     public MobZombie(World w, String name) {
@@ -37,5 +39,10 @@ public class MobZombie extends SLMob {
         a.setMagicDefense(20);
         a.setMagicPEN(70);
         a.setPhysicalPEN(70);
+    }
+
+    @Override
+    public List<String> drops() {
+        return List.of("1:BOW:1","0.75:PEDANG_LOREM_IPSUM:1~5");
     }
 }

@@ -6,6 +6,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import static me.wisemann64.soulland.items.SLItems.key;
 
@@ -94,9 +95,13 @@ public class PlayerAttributes {
         double main = owner.getMainHandATK();
         double magic = owner.getMainHandMATK();
 
+        EnumMap<Stats, Double> effBonus = owner.getPotionBoost();
+        double bonus;
+
         // ATK
         stat = 1 + main + 0.12*lv*lv + Math.min(main,1.2*str) + 0.0125*lv*str;
-        setStats(Stats.ATK,stat);
+        bonus = 1 + effBonus.getOrDefault(Stats.ATK,0.0);
+        setStats(Stats.ATK,Math.max(stat*bonus,1.0));
 
         // MATK
         stat = magic + 0.14*lv*lv + Math.min(magic,1.8*in) + 0.014*lv*in;
@@ -104,17 +109,20 @@ public class PlayerAttributes {
 
         // RATK
         stat = owner.getMainHandRATK() + 0.125*lv*lv + Math.min(main,1.3*str) + 0.0125*lv*str;
-        setStats(Stats.RATK,stat);
+        bonus = 1 + effBonus.getOrDefault(Stats.RATK,0.0);
+        setStats(Stats.RATK,Math.max(stat*bonus,1.0));
 
         // CRIT RATE
         stat = 0.25 + 0.00375*lv + 0.005*crit;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("crit_rate"), PersistentDataType.DOUBLE,0.0);
-        setStats(Stats.CRIT_RATE,stat);
+        bonus = effBonus.getOrDefault(Stats.CRIT_RATE,0.0);
+        setStats(Stats.CRIT_RATE,Math.max(stat+bonus,0.0));
 
         // CRIT DAMAGE
         stat = 50 + 0.25*str + 0.75*crit;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("crit_damage"), PersistentDataType.DOUBLE,0.0);
-        setStats(Stats.CRIT_DAMAGE,stat);
+        bonus = effBonus.getOrDefault(Stats.CRIT_DAMAGE,0.0);
+        setStats(Stats.CRIT_DAMAGE,stat+bonus);
 
         // MAX HP
         stat = 20;
@@ -129,12 +137,14 @@ public class PlayerAttributes {
         // DEFENSE
         stat = 0;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("def"), PersistentDataType.DOUBLE,0.0);
-        setStats(Stats.DEF,Math.max(-300,Math.min(stat,1000)));
+        bonus = effBonus.getOrDefault(Stats.DEF,0.0);
+        setStats(Stats.DEF,Math.max(-300,Math.min(stat+bonus,1000)));
 
         // MAGIC DEFENSE
         stat = 0;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("mdef"), PersistentDataType.DOUBLE,0.0);
-        setStats(Stats.MDEF,stat);
+        bonus = effBonus.getOrDefault(Stats.MDEF,0.0);
+        setStats(Stats.MDEF,Math.max(-300,Math.min(stat+bonus,1000)));
 
         // PEN
         stat = 0;

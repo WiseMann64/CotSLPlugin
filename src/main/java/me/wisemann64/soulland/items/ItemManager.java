@@ -32,13 +32,21 @@ public class ItemManager {
             Material mat = Material.valueOf(sect.getString("material"));
             ItemAbstract i = switch (type) {
                 case WEAPON -> new ItemWeapon(id,mat);
+                case MATERIAL -> new ItemMaterial(id,mat);
+                case KEY -> new ItemKey(id,mat);
+                case ARMOR -> new ItemArmor(id,mat);
             };
             i.setName(sect.getString("name"));
             i.setLore(sect.getStringList("lore"));
 
             if (i instanceof ItemModifiable im) {
                 ConfigurationSection mod = sect.getConfigurationSection("mod");
-                if (mod != null) im.readData(mod);
+                if (mod != null) im.readModifiableData(mod);
+            }
+
+            if (i instanceof ItemArmor ia) {
+                ConfigurationSection armor = sect.getConfigurationSection("armor");
+                if (armor != null) ia.readArmorData(armor);
             }
 
             items.put(id,i);
@@ -50,6 +58,10 @@ public class ItemManager {
     }
 
     public ItemAbstract getItem(String id) {
-        return items.get(id);
+        return items.get(id).clone();
+    }
+
+    public ItemAbstract getItem(String id, int amount) {
+        return items.get(id).clone().setCount(amount);
     }
 }

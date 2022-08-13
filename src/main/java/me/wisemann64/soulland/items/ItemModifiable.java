@@ -9,7 +9,7 @@ public interface ItemModifiable {
 
     String generateName();
     List<String> generateLore();
-    void readData(@NotNull ConfigurationSection config);
+    void readModifiableData(@NotNull ConfigurationSection config);
     boolean hasSlot();
     void setSlotted(boolean slot);
     String getPowerStone();

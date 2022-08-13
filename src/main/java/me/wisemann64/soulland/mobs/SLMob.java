@@ -2,6 +2,9 @@ package me.wisemann64.soulland.mobs;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.combat.CombatEntity;
+import me.wisemann64.soulland.items.ItemAbstract;
+import me.wisemann64.soulland.items.ItemManager;
+import me.wisemann64.soulland.items.SLItems;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
@@ -13,12 +16,10 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static me.wisemann64.soulland.Utils.color;
 
@@ -102,9 +103,9 @@ public abstract class SLMob implements CombatEntity {
         } catch (RuntimeException ignored) {
 
         }
-        SoulLand.getMobManager().removeMobFromRegistry(mobId);
         if (getHandle() instanceof LivingEntity g) g.setHealth(0);
         else getHandle().remove();
+        SoulLand.getMobManager().removeMobFromRegistry(mobId);
     }
 
     public void quickRemove() {
@@ -115,6 +116,7 @@ public abstract class SLMob implements CombatEntity {
         }
         lastDamager = null;
         getHandle().remove();
+        SoulLand.getMobManager().removeMobFromRegistry(mobId);
     }
 
     public static void setLocation(net.minecraft.server.v1_16_R3.Entity handle, Location loc) {
@@ -184,6 +186,36 @@ public abstract class SLMob implements CombatEntity {
     }
     public int getLevel() {
         return level;
+    }
+    public abstract List<String> drops();
+    /*
+    Chance:ITEM:Count
+    1:BOW:1
+    0.74:FLESH:2~4
+     */
+    public List<ItemStack> getDrops() {
+        List<ItemStack> ret = new ArrayList<>();
+        if (drops() == null) return ret;
+        for (String s : drops()) {
+            String[] a = s.split(":");
+            try {
+                double chance = Double.parseDouble(a[0]);
+                Random r = new Random();
+                boolean exec = r.nextDouble() < chance;
+                if (!exec) continue;
+                String id = a[1];
+                int count;
+                if (a[2].contains("~")) {
+                    String[] b = a[2].split("~");
+                    int min = Integer.parseInt(b[0]);
+                    count = r.nextInt(1+Integer.parseInt(b[1])-min) + min;
+                } else count = Integer.parseInt(a[2]);
+                ret.add(SoulLand.getItemManager().getItem(id,count).toItem());
+            } catch (RuntimeException e) {
+                System.err.println("Mob drop " + s + " caused an exception");
+            }
+        }
+        return ret;
     }
     public Location getEyeLocation() {
         if (handle.getBukkitEntity() instanceof LivingEntity li) return li.getEyeLocation();

@@ -3,6 +3,8 @@ package me.wisemann64.soulland.items;
 import me.wisemann64.soulland.SoulLand;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 import static me.wisemann64.soulland.Utils.color;
 
@@ -82,5 +85,12 @@ public class SLItems {
 
     public static net.minecraft.server.v1_16_R3.ItemStack nms(ItemStack from) {
         return CraftItemStack.asNMSCopy(from);
+    }
+
+    public static void stripDefense(@NotNull ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        meta.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),"armor",0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS,new AttributeModifier(UUID.randomUUID(),"armor_toughness",0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        item.setItemMeta(meta);
     }
 }

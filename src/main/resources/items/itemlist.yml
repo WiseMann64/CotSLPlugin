@@ -83,3 +83,63 @@ IPSUM:
   mod:
     sub: MELEE
     def: 500
+STONE:
+  type: MATERIAL
+  material: STONE
+  name: "Stone"
+PATUNG_BATU:
+  type: MATERIAL
+  material: STONE
+  name: "Patung Batu"
+  lore:
+    - "&oPatung batu yeuh ngab"
+    - "&oNGAB NGAB NGAB NGAB"
+WEIRD_KEY:
+  type: KEY
+  material: TRIPWIRE_HOOK
+  name: "Weird Key"
+
+BASIC_HELMET:
+  type: ARMOR
+  material: LEATHER_HELMET
+  name: "Basic Helmet"
+  mod:
+    health: 2
+    def: 10
+    mdef: 2.5
+    max_upgrade: 5
+  armor:
+    color: [255,255,255]
+BASIC_CHESTPLATE:
+  type: ARMOR
+  material: LEATHER_CHESTPLATE
+  name: "Basic Chestplate"
+  mod:
+    health: 2
+    def: 10
+    mdef: 2.5
+    max_upgrade: 5
+  armor:
+    color: [255,255,255]
+BASIC_LEGGINGS:
+  type: ARMOR
+  material: LEATHER_LEGGINGS
+  name: "Basic Leggings"
+  mod:
+    health: 2
+    def: 10
+    mdef: 2.5
+    max_upgrade: 5
+  armor:
+    color: [255,255,255]
+BASIC_BOOTS:
+  type: ARMOR
+  material: LEATHER_BOOTS
+  name: "Basic Boots"
+  mod:
+    health: 2
+    def: 10
+    mdef: 2.5
+    max_upgrade: 5
+  armor:
+    color: [255,255,255]

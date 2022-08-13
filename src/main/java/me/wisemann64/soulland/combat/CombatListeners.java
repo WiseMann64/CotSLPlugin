@@ -1,11 +1,8 @@
 package me.wisemann64.soulland.combat;
 
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.Utils;
 import me.wisemann64.soulland.mobs.SLMob;
 import me.wisemann64.soulland.players.SLPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataAdapterContext;
-import org.bukkit.craftbukkit.v1_16_R3.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -13,8 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.persistence.PersistentDataAdapterContext;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import static me.wisemann64.soulland.items.SLItems.key;

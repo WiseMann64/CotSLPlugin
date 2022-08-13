@@ -1,9 +1,11 @@
 package me.wisemann64.soulland.items;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +17,7 @@ import java.util.List;
 import static me.wisemann64.soulland.Utils.color;
 import static me.wisemann64.soulland.items.SLItems.key;
 
-public class ItemWeapon extends ItemAbstract implements ItemModifiable {
+public class ItemArmor extends ItemAbstract implements ItemModifiable {
 
     private final EnumMap<ItemModifiers,Double> modifiers = new EnumMap<>(ItemModifiers.class);
     private final EnumMap<ItemModifiers,Double> calculated = new EnumMap<>(ItemModifiers.class);
@@ -23,19 +25,10 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
     private String power = null;
     private int maxUpgrade = 0;
     private int upgrade = 0;
-    private Subtype subtype = Subtype.MELEE;
-
-    public ItemWeapon(String id, Material material) {
-        super(id, ItemType.WEAPON, material);
-    }
-
-    private enum Subtype {
-        MELEE("Melee Weapon"),
-        RANGED("Ranged Weapon");
-        final String display;
-        Subtype(String a) {
-            display = a;
-        }
+    private int[] color;
+    private boolean hasColor;
+    public ItemArmor(String id, Material material) {
+        super(id, ItemType.ARMOR, material);
     }
 
     @Override
@@ -46,7 +39,12 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
         ItemMeta meta = ret.getItemMeta();
         meta.setDisplayName(generateName());
         meta.setLore(generateLore());
+        if (hasColor) {
+            LeatherArmorMeta meta1 = (LeatherArmorMeta) meta;
+            meta1.setColor(Color.fromRGB(color[0],color[1],color[2]));
+        }
         ret.setItemMeta(meta);
+        SLItems.stripDefense(ret);
         return ret;
     }
 
@@ -55,12 +53,11 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
         PersistentDataContainer body = meta.getPersistentDataContainer();
         PersistentDataContainer modifiable = body.getAdapterContext().newPersistentDataContainer();
 
-        modifiable.set(key("apply"), PersistentDataType.STRING,"main");
+        modifiable.set(key("apply"), PersistentDataType.STRING,"armor");
         modifiable.set(key("max_upgrade"),PersistentDataType.INTEGER,maxUpgrade);
         modifiable.set(key("upgrade"),PersistentDataType.INTEGER,upgrade);
         modifiable.set(key("slot"),PersistentDataType.INTEGER,hasSlot ? 1 : 0);
         modifiable.set(key("power"),PersistentDataType.STRING,power == null ? "NONE" : power);
-        modifiable.set(key("subtype"),PersistentDataType.STRING,subtype.toString());
 
         PersistentDataContainer base = modifiable.getAdapterContext().newPersistentDataContainer();
         modifiers.keySet().forEach(k -> base.set(key(k.getPath()),PersistentDataType.DOUBLE,modifiers.get(k)));
@@ -79,24 +76,13 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
 
     private void calculate(PersistentDataContainer cont) {
         for (ItemModifiers v : modifiers.keySet()) {
-            if (v == ItemModifiers.DAMAGE || v == ItemModifiers.PROJECTILE_DAMAGE || v == ItemModifiers.MAGIC_DAMAGE) {
-                double atk = modifiers.get(v);
-                double newAtk = atk + upgrade *Math.min(0.05*atk,10) + upgrade *0.05*atk;
-                newAtk = Math.round(newAtk*100)/100D;
-                cont.set(key(v.getPath()),PersistentDataType.DOUBLE,newAtk);
-                calculated.put(v,newAtk);
-            } else {
-                cont.set(key(v.getPath()), PersistentDataType.DOUBLE, modifiers.get(v));
-                calculated.put(v,modifiers.get(v));
-            }
+            cont.set(key(v.getPath()), PersistentDataType.DOUBLE, modifiers.get(v));
+            calculated.put(v,modifiers.get(v));
         }
+        // TODO UPGRADE SCHEME FOR ARMORS
         /*
         Power Stone
          */
-    }
-
-    public static void refresh(ItemStack item) {
-
     }
 
     @Override
@@ -109,7 +95,7 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
     public List<String> generateLore() {
         List<String> lore = new ArrayList<>();
 
-        lore.add("&8" + subtype.display);
+        lore.add("&8Armors");
 
         for (ItemModifiers v : ItemModifiers.values()) {
             if (!modifiers.containsKey(v)) continue;
@@ -121,16 +107,6 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
                 case STR,CRIT,INT,VIT -> sb.append(Math.round(base));
                 case CRITICAL_RATE -> sb.append(Math.round(10000*base)/100D).append("%");
                 default -> sb.append(Math.round(100*base)/100D);
-            }
-            double val = calculated.get(v);
-            if (val != base) {
-                sb.append(" &6[&e+");
-                double add = val - base;
-                switch (v) {
-                    case STR,CRIT,INT,VIT -> sb.append(Math.round(add)).append("&6]");
-                    case CRITICAL_RATE -> sb.append(Math.round(10000*add)/100D).append("%&6]");
-                    default -> sb.append(Math.round(100*add)/100D).append("&6]");
-                }
             }
             lore.add(sb.toString());
         }
@@ -158,12 +134,25 @@ public class ItemWeapon extends ItemAbstract implements ItemModifiable {
     @Override
     public void readModifiableData(@NotNull ConfigurationSection config) {
         for (ItemModifiers v : ItemModifiers.values()) {
+            switch (v) {
+                case DAMAGE, MAGIC_DAMAGE, PROJECTILE_DAMAGE -> {
+                    continue;
+                }
+            }
             if (!config.contains(v.getPath())) continue;
             double val = config.getDouble(v.getPath());
             modifiers.put(v,val);
         }
-        subtype = Subtype.valueOf(config.getString("sub","MELEE"));
         maxUpgrade = config.getInt("max_upgrade",0);
+    }
+
+    public void readArmorData(@NotNull ConfigurationSection config) {
+        if (config.contains("color")) {
+            List<Integer> color = config.getIntegerList("color");
+            this.color = new int[]{0, 0, 0};
+            for (int i = 0; i < 3; i++) this.color[i] = color.get(i);
+            hasColor = true;
+        }
     }
 
     public EnumMap<ItemModifiers, Double> getModifiers() {

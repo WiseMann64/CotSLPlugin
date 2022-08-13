@@ -99,20 +99,6 @@ public class PlayerManager implements Listener {
     }
 
     @EventHandler
-    public void event(EntityPotionEffectEvent v) {
-        SLPlayer p = SoulLand.getPlayerManager().getPlayer(v.getEntity().getUniqueId());
-        if (p == null) return;
-        if (v.getAction() != EntityPotionEffectEvent.Action.ADDED) return;
-        PotionEffect eff = v.getNewEffect();
-        if (eff == null) return;
-        if (!(eff.getType().equals(PotionEffectType.ABSORPTION))) return;
-        int duration = eff.getDuration();
-        int level = eff.getAmplifier() + 1;
-        p.setAbsorption(p.getMaxHealth()*level/5,duration);
-        v.setCancelled(true);
-    }
-
-    @EventHandler
     public void event(InventoryClickEvent v) {
         SLPlayer p = SoulLand.getPlayerManager().getPlayer(v.getWhoClicked().getUniqueId());
         if (p == null) return;

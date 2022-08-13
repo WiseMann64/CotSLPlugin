@@ -6,6 +6,7 @@ import me.wisemann64.soulland.commands.ItemCommand;
 import me.wisemann64.soulland.commands.TestCommand;
 import me.wisemann64.soulland.items.ItemManager;
 import me.wisemann64.soulland.listeners.InventoryClick;
+import me.wisemann64.soulland.listeners.MobListeners;
 import me.wisemann64.soulland.listeners.PlayerListeners;
 import me.wisemann64.soulland.mobs.SLMob;
 import me.wisemann64.soulland.players.SLPlayer;
@@ -52,6 +53,7 @@ public final class SoulLand extends JavaPlugin {
         pm.registerEvents(new InventoryClick(),this);
         pm.registerEvents(new PlayerListeners(), this);
         pm.registerEvents(new CombatListeners(), this);
+        pm.registerEvents(new MobListeners(),this);
     }
 
     @Override
