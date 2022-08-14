@@ -1,18 +1,23 @@
 package me.wisemann64.soulland.mobs;
 
 import net.minecraft.server.v1_16_R3.DamageSource;
+import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EntityZombie;
 import net.minecraft.server.v1_16_R3.World;
 
 public class HandleZombie extends EntityZombie {
 
-    private final MobZombie handler;
+    private final SLMob handler;
 
     public HandleZombie(World world, MobZombie handler) {
-        super(world);
+        super(EntityTypes.ZOMBIE ,world);
         this.handler = handler;
-        setCustomNameVisible(true);
         setPersistent();
+        setCustomNameVisible(true);
+    }
+
+    public MobZombie getHandler() {
+        return (MobZombie) handler;
     }
 
     @Override

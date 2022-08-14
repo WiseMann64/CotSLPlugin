@@ -13,7 +13,7 @@ public class MobSkeleton extends SLMob {
     }
 
     @Override
-    public HandleSkeleton getSLHandler() {
+    public HandleSkeleton getMobHandle() {
         return (HandleSkeleton) handle;
     }
 
@@ -23,7 +23,7 @@ public class MobSkeleton extends SLMob {
     }
 
     @Override
-    public void createHandle(World world, String name) {
+    public void createHandle(World world) {
         WorldServer ws = ((CraftWorld)world).getHandle();
         this.handle = new HandleSkeleton(ws,this);
     }

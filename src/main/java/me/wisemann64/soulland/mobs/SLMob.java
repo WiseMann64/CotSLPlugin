@@ -2,10 +2,8 @@ package me.wisemann64.soulland.mobs;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.combat.CombatEntity;
-import me.wisemann64.soulland.items.ItemAbstract;
-import me.wisemann64.soulland.items.ItemManager;
-import me.wisemann64.soulland.items.SLItems;
 import net.minecraft.server.v1_16_R3.DamageSource;
+import net.minecraft.server.v1_16_R3.EntityCreature;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Bukkit;
@@ -26,7 +24,7 @@ import static me.wisemann64.soulland.Utils.color;
 public abstract class SLMob implements CombatEntity {
 
     protected final CraftServer server = ((CraftServer)Bukkit.getServer());
-    protected EntityLiving handle;
+    protected EntityCreature handle;
     protected final int mobId;
     protected org.bukkit.entity.Entity lastDamager = null;
     protected final MobAttributes attributes = new MobAttributes(this);
@@ -38,7 +36,7 @@ public abstract class SLMob implements CombatEntity {
 
     private boolean isInvul;
 
-    private final BukkitRunnable tick = new BukkitRunnable() {
+    final BukkitRunnable tick = new BukkitRunnable() {
         @Override
         public void run() {
             tick();
@@ -75,16 +73,27 @@ public abstract class SLMob implements CombatEntity {
         this.level = level;
         mobId = SoulLand.getMobManager().putMobToRegistry(this);
         mobName = name;
-        createHandle(w,name);
+        createHandle(w);
         initAttribute();
         tick.runTaskTimer(SoulLand.getPlugin(),1L,1L);
+    }
+
+    SLMob(World w, String name, int level, boolean delayCreateHandle) {
+        this.level = level;
+        mobId = SoulLand.getMobManager().putMobToRegistry(this);
+        mobName = name;
+        if (!delayCreateHandle) {
+            createHandle(w);
+            initAttribute();
+            tick.runTaskTimer(SoulLand.getPlugin(), 1L, 1L);
+        }
     }
 
 
     public Entity getHandle() {
         return handle.getBukkitEntity();
     }
-    public abstract EntityLiving getSLHandler();
+    public abstract EntityCreature getMobHandle();
     public abstract double getExplosionPower();
 
     public MobAttributes getAttributes() {
@@ -133,12 +142,12 @@ public abstract class SLMob implements CombatEntity {
     }
 
     public void setNoAI(boolean val) {
-        if (this.handle instanceof EntityInsentient g) g.setNoAI(val);
+        handle.setNoAI(val);
     }
     public Location getLocation() {
         return this.getHandle().getLocation();
     }
-    public abstract void createHandle(World world, String name);
+    public abstract void createHandle(World world);
     public abstract void initAttribute();
     public void setInvul(boolean var) {
         isInvul = var;

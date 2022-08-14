@@ -61,9 +61,7 @@ public class PlayerManager implements Listener {
 
     public void removePlayer(Player player) {
         SLPlayer toRemove = null;
-        for (SLPlayer p : players) {
-            if (p.getHandle().equals(player)) toRemove = p;
-        }
+        for (SLPlayer p : players) if (p.getHandle().equals(player)) toRemove = p;
         if (toRemove != null) removePlayer(toRemove);
     }
 

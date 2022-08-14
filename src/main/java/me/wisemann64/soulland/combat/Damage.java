@@ -43,4 +43,9 @@ public class Damage {
     public void addPen(int toAdd) {
         penetration += toAdd;
     }
+
+    @Override
+    public String toString() {
+        return "{type=" + type + ", oldValue=" + oldValue + ", newValue=" + newValue + ", penetration=" + penetration + ", crit=" + crit + "}";
+    }
 }

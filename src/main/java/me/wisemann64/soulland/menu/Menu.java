@@ -56,6 +56,7 @@ public abstract class Menu implements InventoryHolder {
     protected final static ItemStack BACK = createBack();
     protected final static ItemStack CLOSE = createClose();
     protected final static ItemStack COMING_SOON = createComingSoon();
+    protected final static ItemStack NOT_YET_UNLOCKED = createNotYetUnlocked();
 
     private static ItemStack createPane() {
         ItemStack is = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
@@ -86,6 +87,15 @@ public abstract class Menu implements InventoryHolder {
         ItemMeta meta = pane.getItemMeta();
         assert meta != null;
         meta.setDisplayName(color("&eComing Soon!"));
+        pane.setItemMeta(meta);
+        return pane;
+    }
+
+    private static ItemStack createNotYetUnlocked() {
+        ItemStack pane = new ItemStack(Material.BARRIER, 1);
+        ItemMeta meta = pane.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(color("&cNot Yet Unlocked"));
         pane.setItemMeta(meta);
         return pane;
     }

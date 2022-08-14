@@ -76,8 +76,26 @@ public class ItemArmor extends ItemAbstract implements ItemModifiable {
 
     private void calculate(PersistentDataContainer cont) {
         for (ItemModifiers v : modifiers.keySet()) {
-            cont.set(key(v.getPath()), PersistentDataType.DOUBLE, modifiers.get(v));
-            calculated.put(v,modifiers.get(v));
+            switch (v) {
+                case HEALTH -> {
+                    double hp = modifiers.get(v);
+                    double newHp = hp + upgrade *Math.min(0.05*hp,0.25) + upgrade *0.05*hp;
+                    newHp = Math.round(newHp*100)/100D;
+                    cont.set(key(v.getPath()),PersistentDataType.DOUBLE,newHp);
+                    calculated.put(v,newHp);
+                }
+                case DEF,MDEF -> {
+                    double def = modifiers.get(v);
+                    double newDef = def + upgrade *Math.min(0.075*def,2.5) + upgrade *0.075*def;
+                    newDef = Math.round(newDef*100)/100D;
+                    cont.set(key(v.getPath()),PersistentDataType.DOUBLE,newDef);
+                    calculated.put(v,newDef);
+                }
+                default -> {
+                    cont.set(key(v.getPath()), PersistentDataType.DOUBLE, modifiers.get(v));
+                    calculated.put(v,modifiers.get(v));
+                }
+            }
         }
         // TODO UPGRADE SCHEME FOR ARMORS
         /*
@@ -107,6 +125,16 @@ public class ItemArmor extends ItemAbstract implements ItemModifiable {
                 case STR,CRIT,INT,VIT -> sb.append(Math.round(base));
                 case CRITICAL_RATE -> sb.append(Math.round(10000*base)/100D).append("%");
                 default -> sb.append(Math.round(100*base)/100D);
+            }
+            double val = calculated.get(v);
+            if (val != base) {
+                sb.append(" &6[&e+");
+                double add = val - base;
+                switch (v) {
+                    case STR,CRIT,INT,VIT -> sb.append(Math.round(add)).append("&6]");
+                    case CRITICAL_RATE -> sb.append(Math.round(10000*add)/100D).append("%&6]");
+                    default -> sb.append(Math.round(100*add)/100D).append("&6]");
+                }
             }
             lore.add(sb.toString());
         }

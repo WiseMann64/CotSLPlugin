@@ -9,11 +9,11 @@ import java.util.List;
 public class MobZombie extends SLMob {
 
     public MobZombie(World w, String name) {
-        super(w, name, 5);
+        super(w, name, 0);
     }
 
     @Override
-    public HandleZombie getSLHandler() {
+    public HandleZombie getMobHandle() {
         return (HandleZombie) handle;
     }
 
@@ -23,7 +23,7 @@ public class MobZombie extends SLMob {
     }
 
     @Override
-    public void createHandle(World world, String name) {
+    public void createHandle(World world) {
         WorldServer ws = ((CraftWorld)world).getHandle();
         this.handle = new HandleZombie(ws,this);
     }
@@ -31,14 +31,14 @@ public class MobZombie extends SLMob {
     @Override
     public void initAttribute() {
         MobAttributes a = getAttributes();
-        a.setMaxHealth(40);
-        a.setHealth(40);
-        a.setAttackPower(5);
-        a.setDefense(20);
+        a.setMaxHealth(20);
+        a.setHealth(20);
+        a.setAttackPower(4);
+        a.setDefense(0);
         a.setMagicAttack(0);
-        a.setMagicDefense(20);
-        a.setMagicPEN(70);
-        a.setPhysicalPEN(70);
+        a.setMagicDefense(0);
+        a.setMagicPEN(0);
+        a.setPhysicalPEN(0);
     }
 
     @Override

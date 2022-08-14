@@ -7,17 +7,19 @@ import me.wisemann64.soulland.combat.DamageType;
 import me.wisemann64.soulland.items.ItemAbstract;
 import me.wisemann64.soulland.items.ItemWeapon;
 import me.wisemann64.soulland.items.SLItems;
-import me.wisemann64.soulland.mobs.MobCreeper;
-import me.wisemann64.soulland.mobs.MobSkeleton;
-import me.wisemann64.soulland.mobs.MobZombie;
+import me.wisemann64.soulland.mobs.*;
 import me.wisemann64.soulland.players.SLPlayer;
+import me.wisemann64.soulland.players.Stats;
+import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.EntityZombie;
+import net.minecraft.server.v1_16_R3.World;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,6 +28,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +102,7 @@ public class TestCommand implements TabExecutor {
             }
             case "zombie" -> {
                 Location l = p.getHandle().getLocation();
-                new MobZombie(l.getWorld(),"Agus").spawn(l);
+                new MobZombie(l.getWorld(),"Basic Zombie").spawn(l);
             }
             case "creeper" -> {
                 Location l = p.getHandle().getLocation();
@@ -108,6 +111,21 @@ public class TestCommand implements TabExecutor {
             case "skeleton" -> {
                 Location l = p.getHandle().getLocation();
                 new MobSkeleton(l.getWorld(),"SkelSeton").spawn(l);
+            }
+            case "generic" -> {
+                Location l = p.getHandle().getLocation();
+                MobGeneric.Customizer c = new MobGeneric.Customizer(MobGenericTypes.ZOMBIE);
+                c.setName("Darmaji");
+                c.setLevel(40);
+                c.setExplosionPower(20);
+                c.getInitStats().put(Stats.ATK, 50.0);
+                c.getInitStats().put(Stats.HEALTH, 150.0);
+                c.getInitStats().put(Stats.DEF,750.0);
+                new MobGeneric(pl.getWorld(),c).spawn(l);
+                c.setType(MobGenericTypes.SKELETON);
+                new MobGeneric(pl.getWorld(),c).spawn(l);
+                c.setType(MobGenericTypes.CREEPER);
+                new MobGeneric(pl.getWorld(),c).spawn(l);
             }
         }
         return false;

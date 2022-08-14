@@ -45,6 +45,7 @@ public class SLPlayer implements CombatEntity {
     private PlayerAttributes attributes;
     private Mastery mastery;
     private boolean debugMode = false;
+    private boolean magicUnlocked = false;
     private final EnumMap<EntityDamageEvent.DamageCause,Integer> envDamageCooldown = new EnumMap<>(EntityDamageEvent.DamageCause.class);
 
     private final BukkitRunnable tickAction = new BukkitRunnable() {
@@ -57,8 +58,19 @@ public class SLPlayer implements CombatEntity {
     private boolean abmInterrupt = false;
     private String abmIMessage = "";
     private long abmRemainingTicks = 0;
-    private final String defaultActionBarMessage = "&c%health/%maxHealth &4[&c❤&4]    &b%mana/%maxMana &3[&b✦&3]";
-    private final String absorptionMessage = "&c%health/%maxHealth &4[&c❤&4]  %absorption  &b%mana/%maxMana &3[&b✦&3]";
+
+    private String buildActionBarMessage() {
+        StringBuilder sb = new StringBuilder("&c%health/%maxHealth &4[&c❤&4]");
+        if (hasAbsorption()) {
+            sb.append("  %absorption");
+            return sb.toString();
+        }
+        if (magicUnlocked) {
+            sb.append("  &b%mana/%maxMana &3[&b✦&3]");
+            return sb.toString();
+        }
+        return sb.toString();
+    }
 
     public SLPlayer(Player player) {
         handle = player;
@@ -127,7 +139,7 @@ public class SLPlayer implements CombatEntity {
     }
 
     private void sendActionBarMessage() {
-        String defaultMessage = hasAbsorption() ? absorptionMessage : defaultActionBarMessage;
+        String defaultMessage = buildActionBarMessage();
         handle.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(parseString(abmInterrupt ? abmIMessage : defaultMessage)));
     }
 
@@ -429,6 +441,10 @@ public class SLPlayer implements CombatEntity {
             }
         }
         return ret;
+    }
+
+    public boolean isMagicUnlocked() {
+        return magicUnlocked;
     }
 
     @Override

@@ -127,6 +127,8 @@ public class PlayerAttributes {
         // MAX HP
         stat = 20;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("health"), PersistentDataType.DOUBLE,0.0);
+        stat += 2*lv + 0.4*vit + 0.04*vit*lv;
+        stat *= 1 + 0.0015*vit;
         setStats(Stats.MAX_HEALTH,stat);
 
         // MAX MANA
@@ -135,25 +137,31 @@ public class PlayerAttributes {
         setStats(Stats.MAX_MANA,stat);
 
         // DEFENSE
+        double vitBonus = 1.25 * vit + 0.00012 * lv * lv * vit;
+
         stat = 0;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("def"), PersistentDataType.DOUBLE,0.0);
         bonus = effBonus.getOrDefault(Stats.DEF,0.0);
+        stat += vitBonus;
+        if (stat > 0) stat *= (1+0.0025*vit);
         setStats(Stats.DEF,Math.max(-300,Math.min(stat+bonus,1000)));
 
         // MAGIC DEFENSE
         stat = 0;
         for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("mdef"), PersistentDataType.DOUBLE,0.0);
         bonus = effBonus.getOrDefault(Stats.MDEF,0.0);
+        stat += vitBonus;
+        if (stat > 0) stat *= (1+0.0025*vit);
         setStats(Stats.MDEF,Math.max(-300,Math.min(stat+bonus,1000)));
 
         // PEN
         stat = 0;
-        for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("mdef"), PersistentDataType.DOUBLE,0.0);
+        for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("pen"), PersistentDataType.DOUBLE,0.0);
         setStats(Stats.PEN,stat);
 
         // MPEN
         stat = 0;
-        for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("mana"), PersistentDataType.DOUBLE,0.0);
+        for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("mpen"), PersistentDataType.DOUBLE,0.0);
         setStats(Stats.MPEN,stat);
     }
 

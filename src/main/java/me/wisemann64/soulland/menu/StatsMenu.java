@@ -56,6 +56,11 @@ public class StatsMenu extends Menu {
     }
 
     private ItemStack grabStats(Stats stats) {
+        switch (stats) {
+            case MATK,MAX_MANA,MPEN -> {
+                if (!getOwner().isMagicUnlocked()) return Menu.NOT_YET_UNLOCKED;
+            }
+        }
         Material mat = switch (stats) {
             case MAX_HEALTH -> Material.GOLDEN_APPLE;
             case MAX_MANA -> Material.LAPIS_LAZULI;

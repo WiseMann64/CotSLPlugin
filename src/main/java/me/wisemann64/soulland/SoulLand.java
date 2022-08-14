@@ -58,6 +58,7 @@ public final class SoulLand extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        playerManager.getPlayers().forEach(SLPlayer::logout);
         stopTick();
     }
 

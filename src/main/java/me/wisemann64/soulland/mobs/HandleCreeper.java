@@ -7,13 +7,17 @@ import net.minecraft.server.v1_16_R3.World;
 
 public class HandleCreeper extends EntityCreeper {
 
-    private final MobCreeper handler;
+    private final SLMob handler;
 
     public HandleCreeper(World world, MobCreeper handler) {
         super(EntityTypes.CREEPER, world);
         this.handler = handler;
-        setCustomNameVisible(true);
         setPersistent();
+        setCustomNameVisible(true);
+    }
+
+    public MobCreeper getHandler() {
+        return (MobCreeper) handler;
     }
 
     @Override
@@ -22,3 +26,5 @@ public class HandleCreeper extends EntityCreeper {
         return super.damageEntity(damageSource,f);
     }
 }
+
+

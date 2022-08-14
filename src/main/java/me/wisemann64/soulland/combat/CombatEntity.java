@@ -2,13 +2,11 @@ package me.wisemann64.soulland.combat;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.Utils;
-import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.Random;

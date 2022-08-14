@@ -20,7 +20,7 @@ public class MobCreeper extends SLMob {
     }
 
     @Override
-    public HandleCreeper getSLHandler() {
+    public HandleCreeper getMobHandle() {
         return (HandleCreeper) handle;
     }
 
@@ -30,7 +30,7 @@ public class MobCreeper extends SLMob {
     }
 
     @Override
-    public void createHandle(World world, String name) {
+    public void createHandle(World world) {
         WorldServer ws = ((CraftWorld)world).getHandle();
         this.handle = new HandleCreeper(ws,this);
     }

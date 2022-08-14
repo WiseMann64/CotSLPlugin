@@ -6,14 +6,18 @@ import org.bukkit.inventory.ItemStack;
 
 public class HandleSkeleton extends EntitySkeleton {
 
-    private final MobSkeleton handler;
+    private final SLMob handler;
 
     public HandleSkeleton(World world, MobSkeleton handler) {
         super(EntityTypes.SKELETON,world);
         this.handler = handler;
-        setCustomNameVisible(true);
-        setPersistent();
         setSlot(EnumItemSlot.MAINHAND, SLItems.nms(new ItemStack(org.bukkit.Material.BOW)),true);
+        setPersistent();
+        setCustomNameVisible(true);
+    }
+
+    public MobSkeleton getHandler() {
+        return (MobSkeleton) handler;
     }
 
     @Override
