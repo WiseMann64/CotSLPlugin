@@ -11,3 +11,5 @@ commands:
     description: get item
   mob:
     description: mob generator
+  sltp:
+    description: teleport ngab

@@ -1,16 +1,20 @@
 package me.wisemann64.soulland;
 
-import me.wisemann64.soulland.combat.CombatEntity;
-import me.wisemann64.soulland.combat.CombatListeners;
-import me.wisemann64.soulland.commands.ItemCommand;
-import me.wisemann64.soulland.commands.MobGeneratorCommand;
-import me.wisemann64.soulland.commands.TestCommand;
-import me.wisemann64.soulland.items.ItemManager;
-import me.wisemann64.soulland.listeners.InventoryClick;
-import me.wisemann64.soulland.listeners.MobListeners;
-import me.wisemann64.soulland.listeners.PlayerListeners;
-import me.wisemann64.soulland.mobs.SLMob;
-import me.wisemann64.soulland.players.SLPlayer;
+import me.wisemann64.soulland.gameplay.GameManager;
+import me.wisemann64.soulland.system.MobManager;
+import me.wisemann64.soulland.system.PlayerConfigManager;
+import me.wisemann64.soulland.system.PlayerManager;
+import me.wisemann64.soulland.system.combat.CombatEntity;
+import me.wisemann64.soulland.system.combat.CombatListeners;
+import me.wisemann64.soulland.system.commands.ItemCommand;
+import me.wisemann64.soulland.system.commands.MobGeneratorCommand;
+import me.wisemann64.soulland.system.commands.TeleporterCommand;
+import me.wisemann64.soulland.system.commands.TestCommand;
+import me.wisemann64.soulland.system.items.ItemManager;
+import me.wisemann64.soulland.system.listeners.InventoryClick;
+import me.wisemann64.soulland.system.listeners.MobListeners;
+import me.wisemann64.soulland.system.listeners.PlayerListeners;
+import me.wisemann64.soulland.system.players.SLPlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -49,6 +53,7 @@ public final class SoulLand extends JavaPlugin {
         getCommand("test").setExecutor(new TestCommand());
         getCommand("item").setExecutor(new ItemCommand());
         getCommand("mob").setExecutor(new MobGeneratorCommand());
+        getCommand("sltp").setExecutor(new TeleporterCommand());
 
         // Events Registration
         PluginManager pm = getServer().getPluginManager();
