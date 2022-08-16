@@ -2,7 +2,7 @@ package me.wisemann64.soulland.players;
 
 import me.wisemann64.soulland.PlayerConfigManager;
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.Utils;
+import me.wisemann64.soulland.util.Utils;
 import me.wisemann64.soulland.combat.CombatEntity;
 import me.wisemann64.soulland.combat.Damage;
 import me.wisemann64.soulland.combat.DamageType;
@@ -58,17 +58,19 @@ public class SLPlayer implements CombatEntity {
     private boolean abmInterrupt = false;
     private String abmIMessage = "";
     private long abmRemainingTicks = 0;
+    private long xpTick = 0;
+    private int lastXp = 0;
+
+    private void xpTimer(int amount) {
+        xpTick = 40;
+        lastXp = amount;
+    }
 
     private String buildActionBarMessage() {
         StringBuilder sb = new StringBuilder("&c%health/%maxHealth &4[&c❤&4]");
-        if (hasAbsorption()) {
-            sb.append("  %absorption");
-            return sb.toString();
-        }
-        if (magicUnlocked) {
-            sb.append("  &b%mana/%maxMana &3[&b✦&3]");
-            return sb.toString();
-        }
+        if (xpTick > 0) sb.append("  %xp");
+        if (hasAbsorption()) sb.append("  %absorption");
+        if (magicUnlocked) sb.append("  &b%mana/%maxMana &3[&b✦&3]");
         return sb.toString();
     }
 
@@ -88,7 +90,7 @@ public class SLPlayer implements CombatEntity {
 
     private void createData() {
         mastery.initialize(0,0);
-        attributes.initialize(0,0,0,0);
+        attributes.initialize(0,0,0,0,0);
         saveData();
     }
 
@@ -102,7 +104,8 @@ public class SLPlayer implements CombatEntity {
         int crit = config.getInt("attributes.crit");
         int vit = config.getInt("attributes.vit");
         int in = config.getInt("attributes.int");
-        attributes.initialize(vit,in,str,crit);
+        int av = config.getInt("attributes.available");
+        attributes.initialize(vit,in,str,crit,av);
         int xp = config.getInt("mastery.xp");
         int level = config.getInt("mastery.level");
         mastery.initialize(xp,level);
@@ -121,6 +124,7 @@ public class SLPlayer implements CombatEntity {
         config.set("attributes.crit",attributes.getAttribute(Stats.CRIT));
         config.set("attributes.vit",attributes.getAttribute(Stats.VIT));
         config.set("attributes.int",attributes.getAttribute(Stats.INT));
+        config.set("attributes.available",attributes.getStatsPoint());
         config.set("mastery.xp",getXp());
         config.set("mastery.level",getLevel());
         try {
@@ -170,6 +174,7 @@ public class SLPlayer implements CombatEntity {
             String time = DurationFormatUtils.formatDuration(sec*1000, "mm:ss", true);
             s = s.replace("%absorption", "&e" + Math.round(absorptionAmount) + "❤ &6[&e" + time + "&6]");
         }
+        if (s.contains("%xp")) s = s.replace("%xp","&3[&b+" + lastXp + " XP&3]");
         return ChatColor.translateAlternateColorCodes('&',s);
     }
 
@@ -181,6 +186,7 @@ public class SLPlayer implements CombatEntity {
         absorptionTick();
         xpTick();
         cooldownTick();
+        xpTick = xpTick > 0 ? xpTick-1 : 0;
     }
 
     private void cooldownTick() {
@@ -246,15 +252,15 @@ public class SLPlayer implements CombatEntity {
     }
 
     private void xpTick() {
-        handle.setExp(0.4F);
         handle.setLevel(getLevel());
+        handle.setExp(getLevel() == 40 ? 1.0f : mastery.getProgress());
     }
 
     public void heal(double amount) {
         setHealth(getHealth() + amount);
     }
 
-    public double dealDamage(double amount) {
+    public double dealDamage(double amount, CombatEntity damager) {
         double val0 = amount;
         if (hasAbsorption()) {
             if (absorptionAmount > amount) {
@@ -445,6 +451,12 @@ public class SLPlayer implements CombatEntity {
 
     public boolean isMagicUnlocked() {
         return magicUnlocked;
+    }
+
+    public void addXp(int xpYield) {
+        sound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1f,2f);
+        mastery.addXp(xpYield);
+        xpTimer(xpYield);
     }
 
     @Override

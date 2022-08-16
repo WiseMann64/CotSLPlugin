@@ -27,16 +27,24 @@ public class Mastery {
     }
 
     private void checkLevel() {
-
+        int level = 0;
+        while (cumulativeXp(level+1) <= xp && level < 40) level++;
+        this.level = level;
     }
 
     void initialize(int xp, int level) {
         this.xp = xp;
         this.level = level;
+        checkLevel();
+    }
+
+    public float getProgress() {
+        if (level == 40) return 1.0f;
+        float t = (float) (xp - cumulativeXp(level))/LEVEL_UP.get(level);
+        return Math.max(0,Math.min(1,t));
     }
 
     private static final Map<Integer, Integer> LEVEL_UP = levelUpRequirements();
-    private static final Map<Integer, Integer> CUMULATIVE = cumulativeLevelUp();
 
     private static Map<Integer,Integer> levelUpRequirements() {
         HashMap<Integer,Integer> toRet = new HashMap<>();
@@ -83,48 +91,10 @@ public class Mastery {
         return toRet;
     }
 
-    private static Map<Integer, Integer> cumulativeLevelUp() {
-        HashMap<Integer,Integer> toRet = new HashMap<>();
-        toRet.put(1,250);
-        toRet.put(2,623);
-        toRet.put(3,1177);
-        toRet.put(4,1988);
-        toRet.put(5,3150);
-        toRet.put(6,4775);
-        toRet.put(7,6993);
-        toRet.put(8,9952);
-        toRet.put(9,13818);
-        toRet.put(10,18775);
-        toRet.put(11,25025);
-        toRet.put(12,32788);
-        toRet.put(13,42302);
-        toRet.put(14,53823);
-        toRet.put(15,67625);
-        toRet.put(16,84000);
-        toRet.put(17,103258);
-        toRet.put(18,125727);
-        toRet.put(19,151753);
-        toRet.put(20,181700);
-        toRet.put(21,215950);
-        toRet.put(22,254903);
-        toRet.put(23,298977);
-        toRet.put(24,348608);
-        toRet.put(25,404250);
-        toRet.put(26,466375);
-        toRet.put(27,535473);
-        toRet.put(28,612052);
-        toRet.put(29,696638);
-        toRet.put(30,789775);
-        toRet.put(31,892025);
-        toRet.put(32,1003968);
-        toRet.put(33,1126202);
-        toRet.put(34,1259343);
-        toRet.put(35,1404025);
-        toRet.put(36,1560900);
-        toRet.put(37,1730638);
-        toRet.put(38,1913927);
-        toRet.put(39,2111473);
-        toRet.put(40,2324000);
-        return toRet;
+    public static int cumulativeXp(int level) {
+        level = Math.max(0,Math.min(40,level));
+        int xp = 0;
+        for (int i = 0; i < level; i++) xp += LEVEL_UP.get(i);
+        return xp;
     }
 }

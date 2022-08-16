@@ -3,6 +3,7 @@ package me.wisemann64.soulland;
 import me.wisemann64.soulland.combat.CombatEntity;
 import me.wisemann64.soulland.combat.CombatListeners;
 import me.wisemann64.soulland.commands.ItemCommand;
+import me.wisemann64.soulland.commands.MobGeneratorCommand;
 import me.wisemann64.soulland.commands.TestCommand;
 import me.wisemann64.soulland.items.ItemManager;
 import me.wisemann64.soulland.listeners.InventoryClick;
@@ -47,6 +48,7 @@ public final class SoulLand extends JavaPlugin {
         // Commands registration
         getCommand("test").setExecutor(new TestCommand());
         getCommand("item").setExecutor(new ItemCommand());
+        getCommand("mob").setExecutor(new MobGeneratorCommand());
 
         // Events Registration
         PluginManager pm = getServer().getPluginManager();

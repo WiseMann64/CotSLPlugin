@@ -1,25 +1,21 @@
 package me.wisemann64.soulland.commands;
 
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.Utils;
+import me.wisemann64.soulland.util.CommandParser;
+import me.wisemann64.soulland.util.Utils;
 import me.wisemann64.soulland.combat.Damage;
 import me.wisemann64.soulland.combat.DamageType;
 import me.wisemann64.soulland.items.ItemAbstract;
-import me.wisemann64.soulland.items.ItemWeapon;
 import me.wisemann64.soulland.items.SLItems;
 import me.wisemann64.soulland.mobs.*;
 import me.wisemann64.soulland.players.SLPlayer;
 import me.wisemann64.soulland.players.Stats;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EntityZombie;
-import net.minecraft.server.v1_16_R3.World;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -28,7 +24,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -126,6 +121,11 @@ public class TestCommand implements TabExecutor {
                 new MobGeneric(pl.getWorld(),c).spawn(l);
                 c.setType(MobGenericTypes.CREEPER);
                 new MobGeneric(pl.getWorld(),c).spawn(l);
+            }
+            case "parse" -> {
+                String a ="-a 0 -b 1 -c 2 -d mantap -e \"mantap\" -f \"ngab1 ngab2 ngab3\"";
+                System.out.println(a);
+                System.out.println(CommandParser.parse(a));
             }
         }
         return false;

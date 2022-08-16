@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import static me.wisemann64.soulland.Utils.color;
+import static me.wisemann64.soulland.util.Utils.color;
 import static me.wisemann64.soulland.items.SLItems.key;
 
 public class ItemArmor extends ItemAbstract implements ItemModifiable {

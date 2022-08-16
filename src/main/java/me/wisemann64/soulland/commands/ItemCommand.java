@@ -5,6 +5,7 @@ import me.wisemann64.soulland.items.ItemAbstract;
 import me.wisemann64.soulland.items.ItemModifiable;
 import me.wisemann64.soulland.players.SLPlayer;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -29,14 +30,22 @@ public class ItemCommand implements TabExecutor {
         if (!(sender instanceof Player pl)) return false;
         SLPlayer p = SoulLand.getPlayerManager().getPlayer(pl);
         if (p == null) return false;
-        if (args.length == 2 && args[0].equals("get")) {
+        if (args.length > 1 && args[0].equals("get")) {
             String id = args[1];
             ItemAbstract i = SoulLand.getItemManager().getItem(id);
             if (i == null) {
                 p.sendMessage("&cNo such item id '" + id + "'.");
                 return false;
             }
-            p.getHandle().getInventory().addItem(i.toItem());
+            int count = 1;
+            if (args.length > 2) {
+                try {
+                    count = Integer.parseInt(args[2]);
+                    System.out.println(count);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+            p.getHandle().getInventory().addItem(i.setCount(count).toItem());
         }
         if (args.length == 3 && args[0].equals("modify")) {
             String a2 = args[2];

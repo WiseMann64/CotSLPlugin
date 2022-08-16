@@ -1,7 +1,7 @@
 package me.wisemann64.soulland.combat;
 
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.Utils;
+import me.wisemann64.soulland.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -29,7 +29,7 @@ public interface CombatEntity {
     Location getEyeLocation();
     void setHealth(double health);
     void heal(double amount);
-    double dealDamage(double finalDamage);
+    double dealDamage(double finalDamage, CombatEntity damager);
     Entity getHandle();
     void sendMessage(String msg);
     EnumMap<EntityDamageEvent.DamageCause, Integer> getEnvDamageCooldown();
@@ -42,7 +42,7 @@ public interface CombatEntity {
         def -= damage.getPEN();
         def = Math.max(def,-300);
         double mul = 1 + 0.01 * (def < 0 ? -def*0.1575757576 : def*def/16500 - 26*def/165);
-        damage.setNewValue(dealDamage(damage.getOldValue()*mul));
+        damage.setNewValue(dealDamage(damage.getOldValue()*mul,damage.getDamager()));
         showIndicator(damage);
         return damage.getNewValue();
     }

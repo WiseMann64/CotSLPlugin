@@ -6,6 +6,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-import static me.wisemann64.soulland.Utils.color;
+import static me.wisemann64.soulland.util.Utils.color;
 
 public class SLItems {
 
@@ -80,6 +81,12 @@ public class SLItems {
     public static void hideAllFlags(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         for (ItemFlag v : ItemFlag.values()) meta.addItemFlags(v);
+        item.setItemMeta(meta);
+    }
+
+    public static void setGlowing(@NotNull ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        meta.addEnchant(Enchantment.DURABILITY,10,true);
         item.setItemMeta(meta);
     }
 

@@ -8,11 +8,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import static me.wisemann64.soulland.Utils.color;
+import static me.wisemann64.soulland.util.Utils.color;
 
 public abstract class Menu implements InventoryHolder {
 
-    private Inventory inventory;
+    protected Inventory inventory;
     private final SLPlayer owner;
     protected Menu backMenu;
 

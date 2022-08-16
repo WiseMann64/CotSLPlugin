@@ -100,7 +100,7 @@ public class CombatListeners implements Listener {
             double pen = dam2.getPhysicalPEN();
             Damage d = new Damage(damage,DamageType.PHYSICAL,pen,false);
             if (p.isInvis()) d.setNewValue(0);
-            d.addPen(dam2.getLevel()-p.getLevel());
+            d.addPen(2.5*(dam2.getLevel()-p.getLevel()));
             p.dealDamage(d);
             return;
         }
@@ -111,11 +111,12 @@ public class CombatListeners implements Listener {
                 return;
             }
             Damage d = p.basicAttack();
+            d.setDamager(p);
             if (rec1.isInvis()) {
                 v.setCancelled(true);
                 return;
             }
-            d.addPen(p.getLevel()-rec1.getLevel());
+            d.addPen(2.5*(p.getLevel()-rec1.getLevel()));
             rec1.dealDamage(d);
             rec1.getDamageCooldown().put(p.getUUID(),10);
             return;
@@ -124,11 +125,12 @@ public class CombatListeners implements Listener {
         if (dam1 instanceof SLMob dam2 && rec instanceof SLMob rec1) {
             double damage = v.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION ? dam2.getExplosionPower() : dam2.getAttackPower();
             Damage d = new Damage(damage,DamageType.PHYSICAL,dam2.getPhysicalPEN(),false);
+            d.setDamager(dam2);
             if (rec1.isInvis()) {
                 v.setCancelled(true);
                 return;
             }
-            d.addPen(dam2.getLevel()-rec1.getLevel());
+            d.addPen(2.5*(dam2.getLevel()-rec1.getLevel()));
             rec1.dealDamage(d);
         }
     }
@@ -163,6 +165,7 @@ public class CombatListeners implements Listener {
         }
         a.getPersistentDataContainer().set(key("arrow_damage"), PersistentDataType.DOUBLE,damage);
         a.getPersistentDataContainer().set(key("arrow_shooter"), PersistentDataType.STRING,shooter);
+        a.getPersistentDataContainer().set(key("arrow_shooter_uuid"), new CombatEntityPersistentDataType(),c);
         a.getPersistentDataContainer().set(key("arrow_ppen"), PersistentDataType.DOUBLE,pen);
         a.getPersistentDataContainer().set(key("arrow_level"), PersistentDataType.INTEGER,level);
         a.getPersistentDataContainer().set(key("arrow_critical"), PersistentDataType.INTEGER,crit ? 1 : 0);
@@ -178,12 +181,14 @@ public class CombatListeners implements Listener {
         double pen = a.getPersistentDataContainer().getOrDefault(key("arrow_ppen"),PersistentDataType.DOUBLE,0.0);
         int level = a.getPersistentDataContainer().getOrDefault(key("arrow_level"),PersistentDataType.INTEGER,0);
         boolean crit = a.getPersistentDataContainer().getOrDefault(key("arrow_critical"),PersistentDataType.INTEGER,0) == 1;
+        CombatEntity damager = a.getPersistentDataContainer().get(key("arrow_shooter_uuid"),new CombatEntityPersistentDataType());
         if (rec instanceof SLPlayer && shooter.equals("player")) {
             v.setCancelled(true);
             return;
         }
         Damage dmg = new Damage(damage,DamageType.PHYSICAL,pen,crit);
-        dmg.addPen(level-rec.getLevel());
+        dmg.setDamager(damager);
+        dmg.addPen(2.5*(level-rec.getLevel()));
         rec.dealDamage(dmg);
     }
 }

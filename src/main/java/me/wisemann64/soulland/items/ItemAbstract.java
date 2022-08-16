@@ -19,6 +19,7 @@ public abstract class ItemAbstract implements Cloneable {
     private String name;
     private List<String> lore = null;
     protected int count = 1;
+    protected boolean glow;
 
     public ItemAbstract(String id, ItemType type, Material material) {
         this.id = id;
@@ -31,6 +32,7 @@ public abstract class ItemAbstract implements Cloneable {
         setId(ret,id);
         setString(ret,"type",type.toString());
         hideAllFlags(ret);
+        if (glow) setGlowing(ret);
         return ret;
     }
 
@@ -111,5 +113,9 @@ public abstract class ItemAbstract implements Cloneable {
     public ItemAbstract setCount(int count) {
         this.count = count;
         return this;
+    }
+
+    public void setGlow(boolean glow) {
+        this.glow = glow;
     }
 }

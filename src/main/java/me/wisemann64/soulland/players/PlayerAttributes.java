@@ -6,17 +6,16 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
-import java.util.Map;
 
 import static me.wisemann64.soulland.items.SLItems.key;
 
 public class PlayerAttributes {
 
     private final SLPlayer owner;
-
     private final EnumMap<Stats,Integer> attributesMap = new EnumMap<>(Stats.class);
     private final EnumMap<Stats,Integer> attributesFinal = new EnumMap<>(Stats.class);
     private final EnumMap<Stats,Double> statsMap = new EnumMap<>(Stats.class);
+    private int statsPoint = 0;
 
 
     public PlayerAttributes(SLPlayer player) {
@@ -42,7 +41,7 @@ public class PlayerAttributes {
         attributesFinal.put(Stats.CRIT,0);
     }
 
-    void initialize(int vit, int i, int str, int crt) {
+    void initialize(int vit, int i, int str, int crt, int statsPoint) {
         attributesMap.put(Stats.VIT,vit);
         attributesMap.put(Stats.INT,i);
         attributesMap.put(Stats.STR,str);
@@ -51,6 +50,7 @@ public class PlayerAttributes {
         attributesFinal.put(Stats.INT,i);
         attributesFinal.put(Stats.STR,str);
         attributesFinal.put(Stats.CRIT,crt);
+        this.statsPoint = statsPoint;
     }
 
     private void updateStats() {
@@ -94,21 +94,22 @@ public class PlayerAttributes {
         int lv = level();
         double main = owner.getMainHandATK();
         double magic = owner.getMainHandMATK();
+        double ranged = owner.getMainHandRATK();
 
         EnumMap<Stats, Double> effBonus = owner.getPotionBoost();
         double bonus;
 
         // ATK
-        stat = 1 + main + 0.12*lv*lv + Math.min(main,1.2*str) + 0.0125*lv*str;
+        stat = 1 + main + Math.min(main,0.12*lv*lv) + Math.min(main,1.2*str) + 0.0125*lv*str;
         bonus = 1 + effBonus.getOrDefault(Stats.ATK,0.0);
         setStats(Stats.ATK,Math.max(stat*bonus,1.0));
 
         // MATK
-        stat = magic + 0.14*lv*lv + Math.min(magic,1.8*in) + 0.014*lv*in;
+        stat = magic + Math.min(magic,0.14*lv*lv) + Math.min(magic,1.8*in) + 0.014*lv*in;
         setStats(Stats.MATK,stat);
 
         // RATK
-        stat = owner.getMainHandRATK() + 0.125*lv*lv + Math.min(main,1.3*str) + 0.0125*lv*str;
+        stat = ranged + Math.min(0.125*lv*lv,ranged) + Math.min(main,1.3*str) + 0.0125*lv*str;
         bonus = 1 + effBonus.getOrDefault(Stats.RATK,0.0);
         setStats(Stats.RATK,Math.max(stat*bonus,1.0));
 
@@ -156,7 +157,7 @@ public class PlayerAttributes {
 
         // PEN
         stat = 0;
-        for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("pen"), PersistentDataType.DOUBLE,0.0);
+        for (EnumItemSlot v : equipment.keySet()) stat += equipment.get(v).getOrDefault(key("ppen"), PersistentDataType.DOUBLE,0.0);
         setStats(Stats.PEN,stat);
 
         // MPEN
@@ -228,6 +229,36 @@ public class PlayerAttributes {
 
     public void setStats(@NotNull Stats stats, double val) {
         if (stats.TYPE != Stats.Type.ATTRIBUTE) statsMap.put(stats,val);
+    }
+
+    public int getStatsPoint() {
+        return statsPoint;
+    }
+
+    private int getUsedStatsPoint() {
+        return getAttribute(Stats.STR) + getAttribute(Stats.VIT) + getAttribute(Stats.CRIT) + getAttribute(Stats.INT);
+    }
+
+    public void addStatsPoint(int val) {
+        statsPoint += val;
+    }
+
+    public void restoreStatsPoint() {
+        statsPoint += getUsedStatsPoint();
+        attributesMap.put(Stats.STR,0);
+        attributesMap.put(Stats.CRIT,0);
+        attributesMap.put(Stats.VIT,0);
+        attributesMap.put(Stats.INT,0);
+    }
+
+    public void addStats(Stats stats) {
+        if (statsPoint < 1) return;
+        switch (stats) {
+            case CRIT,INT,VIT,STR -> {
+                statsPoint--;
+                attributesMap.put(stats,attributesMap.get(stats)+1);
+            }
+        }
     }
 
     private int level() {

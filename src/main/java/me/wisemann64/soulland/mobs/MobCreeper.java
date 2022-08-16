@@ -52,4 +52,9 @@ public class MobCreeper extends SLMob {
     public List<String> drops() {
         return drops;
     }
+
+    @Override
+    public int getXpYield() {
+        return 25;
+    }
 }

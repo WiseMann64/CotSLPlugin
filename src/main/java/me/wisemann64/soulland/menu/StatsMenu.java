@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Collections;
 import java.util.List;
 
-import static me.wisemann64.soulland.Utils.color;
+import static me.wisemann64.soulland.util.Utils.color;
 
 public class StatsMenu extends Menu {
     public StatsMenu(SLPlayer owner, Menu from) {

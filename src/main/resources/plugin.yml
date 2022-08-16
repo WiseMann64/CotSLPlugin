@@ -9,3 +9,5 @@ commands:
     description: test command
   item:
     description: get item
+  mob:
+    description: mob generator

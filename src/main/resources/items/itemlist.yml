@@ -30,6 +30,42 @@ BOW:
     proj_damage: 6.0
     crit_damage: 125
     max_upgrade: 20
+ARMOR_PIERCER:
+  type: WEAPON
+  material: CROSSBOW
+  name: "Armor Piercer"
+  mod:
+    sub: RANGED
+    proj_damage: 49.0
+    crit_damage: 40.0
+    crit_rate: 0.3
+    max_upgrade: 15
+    str: 5
+    ppen: 300
+AZIMUTH:
+  type: WEAPON
+  material: STONE_SWORD
+  name: "Azimuth"
+  mod:
+    sub: MELEE
+    damage: 49.0
+    crit_damage: 40.0
+    crit_rate: 0.3
+    max_upgrade: 15
+    str: 5
+    ppen: 300
+EUNBI:
+  type: WEAPON
+  material: DIAMOND_SWORD
+  name: "Kwon Eun-bi"
+  mod:
+    sub: MELEE
+    damage: 49.0
+    crit_damage: 40.0
+    crit_rate: 0.3
+    max_upgrade: 15
+    str: 5
+    ppen: 1000
 PEDANG_LOREM_IPSUM:
   type: WEAPON
   material: IRON_SWORD
@@ -143,3 +179,34 @@ BASIC_BOOTS:
     max_upgrade: 5
   armor:
     color: [255,255,255]
+STEAK:
+  type: MATERIAL
+  material: COOKED_BEEF
+  name: "Steak"
+BREAD:
+  type: MATERIAL
+  material: BREAD
+  name: "Bread"
+ARROW:
+  type: MATERIAL
+  material: ARROW
+  name: "Arrow"
+VAMPIRISM:
+  type: WEAPON
+  material: STONE_SWORD
+  name: "Vampirism"
+  lore:
+    - "&oGue Vampire Ngab!!!"
+    - "&oSEMUANYA ELEH SAMA GUE NGAB!!!1!1!111"
+  glow: true
+  mod:
+    sub: MELEE
+    damage: 230
+    health: 20
+    def: 100
+    max_upgrade: 15
+    crit_rate: 0.25
+    crit_damage: 40
+    ppen: 30
+    mana: 150
+    str: 5

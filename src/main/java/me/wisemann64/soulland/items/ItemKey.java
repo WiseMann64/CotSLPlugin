@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.wisemann64.soulland.Utils.color;
+import static me.wisemann64.soulland.util.Utils.color;
 import static me.wisemann64.soulland.items.SLItems.hideAllFlags;
 
 public class ItemKey extends ItemAbstract {
@@ -20,6 +20,7 @@ public class ItemKey extends ItemAbstract {
     @Override
     public ItemStack toItem() {
         ItemStack ret = generate();
+        ret.setAmount(count);
         hideAllFlags(ret);
         ItemMeta meta = ret.getItemMeta();
         meta.setDisplayName(color("&4" + getName()));

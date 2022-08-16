@@ -2,10 +2,9 @@ package me.wisemann64.soulland.mobs;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.combat.CombatEntity;
+import me.wisemann64.soulland.players.SLPlayer;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.EntityCreature;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,7 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-import static me.wisemann64.soulland.Utils.color;
+import static me.wisemann64.soulland.util.Utils.color;
 
 public abstract class SLMob implements CombatEntity {
 
@@ -112,6 +111,12 @@ public abstract class SLMob implements CombatEntity {
         } catch (RuntimeException ignored) {
 
         }
+        if (lastDamager != null) {
+            SLPlayer p = SoulLand.getPlayerManager().getPlayer(lastDamager.getUniqueId());
+            if (p != null) {
+                p.addXp(getXpYield());
+            }
+        }
         if (getHandle() instanceof LivingEntity g) g.setHealth(0);
         else getHandle().remove();
         SoulLand.getMobManager().removeMobFromRegistry(mobId);
@@ -132,7 +137,8 @@ public abstract class SLMob implements CombatEntity {
         handle.setLocation(loc.getX(),loc.getY(),loc.getZ(), loc.getYaw(), loc.getPitch());
     }
 
-    public double dealDamage(double amount) {
+    public double dealDamage(double amount, CombatEntity damager) {
+        if (damager != null) lastDamager = damager.getHandle();
         setHealth(getHealth()-amount);
         return amount;
     }
@@ -254,5 +260,13 @@ public abstract class SLMob implements CombatEntity {
 
     public String getMobName() {
         return mobName;
+    }
+
+    public int getXpYield() {
+        return 0;
+    }
+
+    public void setLastDamager(CombatEntity lastDamager) {
+        this.lastDamager = lastDamager.getHandle();
     }
 }

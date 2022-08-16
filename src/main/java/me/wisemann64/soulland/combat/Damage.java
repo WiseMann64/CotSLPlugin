@@ -7,6 +7,7 @@ public class Damage {
     private final DamageType type;
     private double penetration;
     private final boolean crit;
+    private CombatEntity damager = null;
 
     public Damage(double value, DamageType type, double penetration, boolean crit) {
         this.oldValue = value;
@@ -40,12 +41,20 @@ public class Damage {
         this.newValue = newValue;
     }
 
-    public void addPen(int toAdd) {
+    public void addPen(double toAdd) {
         penetration += toAdd;
     }
 
     @Override
     public String toString() {
         return "{type=" + type + ", oldValue=" + oldValue + ", newValue=" + newValue + ", penetration=" + penetration + ", crit=" + crit + "}";
+    }
+
+    public CombatEntity getDamager() {
+        return damager;
+    }
+
+    public void setDamager(CombatEntity damager) {
+        this.damager = damager;
     }
 }

@@ -21,6 +21,7 @@ public class MobGeneric extends SLMob {
         MobGenericTypes type;
         String name = "Mob";
         int level = 0;
+        int xp = 0;
         double explosionPower = 0;
         final List<String> drops = new ArrayList<>();
         final EnumMap<Stats,Double> initStats = new EnumMap<>(Stats.class);
@@ -47,6 +48,10 @@ public class MobGeneric extends SLMob {
 
         public MobGenericTypes getType() {
             return type;
+        }
+
+        public void setXp(int xp) {
+            this.xp = xp;
         }
 
         public void setType(MobGenericTypes type) {
@@ -84,6 +89,11 @@ public class MobGeneric extends SLMob {
     @Override
     public double getExplosionPower() {
         return custom.explosionPower;
+    }
+
+    @Override
+    public int getXpYield() {
+        return custom.xp;
     }
 
     @Override

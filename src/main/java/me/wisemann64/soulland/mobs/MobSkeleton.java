@@ -45,4 +45,8 @@ public class MobSkeleton extends SLMob {
     public List<String> drops() {
         return List.of("1:BOW:1","0.75:PEDANG_LOREM_IPSUM:1~5");
     }
+    @Override
+    public int getXpYield() {
+        return 25;
+    }
 }
