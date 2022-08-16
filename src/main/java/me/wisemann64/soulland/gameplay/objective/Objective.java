@@ -8,6 +8,7 @@ public abstract class Objective {
 
     protected boolean completed = false;
     protected Consumer<GameManager> finishEvent = null;
+    protected Consumer<GameManager> startEvent = null;
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
@@ -23,5 +24,13 @@ public abstract class Objective {
     }
     public Consumer<GameManager> getFinishEvent() {
         return finishEvent;
+    }
+
+    public Consumer<GameManager> getStartEvent() {
+        return startEvent;
+    }
+
+    public void setStartEvent(Consumer<GameManager> startEvent) {
+        this.startEvent = startEvent;
     }
 }

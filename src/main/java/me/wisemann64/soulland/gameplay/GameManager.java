@@ -3,10 +3,12 @@ package me.wisemann64.soulland.gameplay;
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.gameplay.cutscene.Cutscene;
 import me.wisemann64.soulland.gameplay.cutscene.CutsceneDialogue;
+import me.wisemann64.soulland.gameplay.cutscene.CutsceneEvent;
 import me.wisemann64.soulland.gameplay.cutscene.Frame;
 import me.wisemann64.soulland.gameplay.objective.Objective;
 import me.wisemann64.soulland.gameplay.objective.ObjectiveGoToLocation;
 import me.wisemann64.soulland.gameplay.objective.ObjectiveKillMob;
+import me.wisemann64.soulland.system.mobs.MobCreeper;
 import me.wisemann64.soulland.system.mobs.MobGeneric;
 import me.wisemann64.soulland.system.mobs.MobGenericTypes;
 import me.wisemann64.soulland.system.players.SLPlayer;
@@ -81,7 +83,11 @@ public class GameManager {
                 cust.getInitStats().put(Stats.HEALTH,200D);
                 cust.getInitStats().put(Stats.ATK,50D);
                 ObjectiveKillMob obj = new ObjectiveKillMob(l,cust);
-                obj.setFinishEvent(gm2 -> shout("Beres Ngab!"));
+                obj.setFinishEvent(gm2 -> {
+                    ObjectiveKillMob obj1 = new ObjectiveKillMob(l, MobCreeper.class,"Hantu Pak RT");
+                    obj1.setFinishEvent(gm3 -> shout("Beres Ngab!"));
+                    gm2.setObjective(obj1);
+                });
                 gm1.setObjective(obj);
             });
             gm.setObjective(g);
@@ -125,6 +131,7 @@ public class GameManager {
         Frame f = currentCutscene.getFrameAt(cutsceneTick);
         registeredPlayers.forEach(p -> p.getHandle().teleport(f.getLocation()));
         Consumer<SLPlayer> c = currentCutscene.getDialogueAt(cutsceneTick);
+        currentCutscene.getEventAt(cutsceneTick).forEach(e -> e.getAction().accept(this));
         if (c != null) registeredPlayers.forEach(c);
     }
 
@@ -135,6 +142,7 @@ public class GameManager {
 
     public void setObjective(Objective o) {
         currentObjective = o;
+        if (o.getStartEvent() != null) o.getStartEvent().accept(this);
     }
 
     private void finishObjective() {

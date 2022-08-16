@@ -14,6 +14,7 @@ public class Cutscene {
 
     final List<Frame> frames = new ArrayList<>();
     final List<CutsceneDialogue> dialogues = new ArrayList<>();
+    final List<CutsceneEvent> events = new ArrayList<>();
     Consumer<GameManager> finishEvent = null;
 
     public Cutscene addFrame(Frame frame) {
@@ -62,6 +63,14 @@ public class Cutscene {
         });
         if (a.isEmpty()) return null;
         return (t) -> a.forEach(msg -> t.sendMessage(msg.dialogue));
+    }
+
+    public List<CutsceneEvent> getEventAt(int tick) {
+        List<CutsceneEvent> g = new ArrayList<>();
+        events.forEach(e -> {
+            if (e.tickAt == tick) g.add(e);
+        });
+        return g;
     }
 
     public Consumer<GameManager> getFinishEvent() {
