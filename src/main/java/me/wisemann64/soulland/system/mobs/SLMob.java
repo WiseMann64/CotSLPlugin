@@ -1,6 +1,7 @@
 package me.wisemann64.soulland.system.mobs;
 
 import me.wisemann64.soulland.SoulLand;
+import me.wisemann64.soulland.gameplay.objective.ObjectiveKillMob;
 import me.wisemann64.soulland.system.combat.CombatEntity;
 import me.wisemann64.soulland.system.players.SLPlayer;
 import net.minecraft.server.v1_16_R3.DamageSource;
@@ -41,6 +42,9 @@ public abstract class SLMob implements CombatEntity {
             tick();
         }
     };
+
+
+    private ObjectiveKillMob objKill = null;
 
     public void tick() {
         handle.getBukkitEntity().setCustomName(parseTag(tag));
@@ -145,6 +149,7 @@ public abstract class SLMob implements CombatEntity {
 
     public void die() {
         remove();
+        if (objKill != null) objKill.mobDie();
     }
 
     public void setNoAI(boolean val) {
@@ -268,5 +273,9 @@ public abstract class SLMob implements CombatEntity {
 
     public void setLastDamager(CombatEntity lastDamager) {
         this.lastDamager = lastDamager.getHandle();
+    }
+
+    public void setObjKill(ObjectiveKillMob objKill) {
+        this.objKill = objKill;
     }
 }

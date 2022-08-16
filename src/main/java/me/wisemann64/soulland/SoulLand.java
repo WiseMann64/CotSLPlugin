@@ -1,15 +1,13 @@
 package me.wisemann64.soulland;
 
 import me.wisemann64.soulland.gameplay.GameManager;
+import me.wisemann64.soulland.gameplay.GameState;
 import me.wisemann64.soulland.system.MobManager;
 import me.wisemann64.soulland.system.PlayerConfigManager;
 import me.wisemann64.soulland.system.PlayerManager;
 import me.wisemann64.soulland.system.combat.CombatEntity;
 import me.wisemann64.soulland.system.combat.CombatListeners;
-import me.wisemann64.soulland.system.commands.ItemCommand;
-import me.wisemann64.soulland.system.commands.MobGeneratorCommand;
-import me.wisemann64.soulland.system.commands.TeleporterCommand;
-import me.wisemann64.soulland.system.commands.TestCommand;
+import me.wisemann64.soulland.system.commands.*;
 import me.wisemann64.soulland.system.items.ItemManager;
 import me.wisemann64.soulland.system.listeners.InventoryClick;
 import me.wisemann64.soulland.system.listeners.MobListeners;
@@ -30,8 +28,8 @@ public final class SoulLand extends JavaPlugin {
     private static PlayerManager playerManager;
     private static MobManager mobManager;
     private static ItemManager itemManager;
+    private static GameManager gameManager;
 
-    private GameManager gameManager;
     private BukkitRunnable pluginTick;
 
     private final static List<BukkitTask> asyncTasks = new ArrayList<>();
@@ -44,7 +42,6 @@ public final class SoulLand extends JavaPlugin {
 
         playerManager = new PlayerManager();
         getServer().getPluginManager().registerEvents(playerManager, this);
-        gameManager = new GameManager(this);
         runTick();
 
         mobManager = new MobManager();
@@ -54,6 +51,7 @@ public final class SoulLand extends JavaPlugin {
         getCommand("item").setExecutor(new ItemCommand());
         getCommand("mob").setExecutor(new MobGeneratorCommand());
         getCommand("sltp").setExecutor(new TeleporterCommand());
+        getCommand("demo").setExecutor(new DemoCommand());
 
         // Events Registration
         PluginManager pm = getServer().getPluginManager();
@@ -61,6 +59,9 @@ public final class SoulLand extends JavaPlugin {
         pm.registerEvents(new PlayerListeners(), this);
         pm.registerEvents(new CombatListeners(), this);
         pm.registerEvents(new MobListeners(),this);
+
+        gameManager = new GameManager();
+        gameManager.setState(GameState.DEVELOPMENT);
     }
 
     @Override
@@ -88,13 +89,13 @@ public final class SoulLand extends JavaPlugin {
     }
 
     private void pluginTick() {
-
+        gameManager.mainTick();
     }
 
     public static SoulLand getPlugin() {
         return plugin;
     }
-    public GameManager getGameManager() {
+    public static GameManager getGameManager() {
         return gameManager;
     }
     public static PlayerManager getPlayerManager() {
@@ -113,5 +114,9 @@ public final class SoulLand extends JavaPlugin {
         SLPlayer a = playerManager.getPlayer(uuid);
         if (a != null) return a;
         return mobManager.getMob(uuid);
+    }
+
+    public static void startDemo() {
+        gameManager.setState(GameState.TESTING);
     }
 }

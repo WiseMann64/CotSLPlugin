@@ -1,6 +1,7 @@
 package me.wisemann64.soulland.system.commands;
 
 import me.wisemann64.soulland.SoulLand;
+import me.wisemann64.soulland.gameplay.cutscene.CutsceneDialogue;
 import me.wisemann64.soulland.system.combat.Damage;
 import me.wisemann64.soulland.system.combat.DamageType;
 import me.wisemann64.soulland.system.items.ItemAbstract;
