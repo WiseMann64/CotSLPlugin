@@ -1,0 +1,150 @@
+{
+  "cs1": {
+    "type": "CUTSCENE",
+    "dialogues": [
+      {
+        "at": 5,
+        "val": "^_^"
+      },
+      {
+        "at": 10,
+        "val": "Halo Ngabzzz"
+      },
+      {
+        "at": 45,
+        "val": "Mantap!"
+      },
+      {
+        "at": 120,
+        "val": "ga keliatan &6wkwkwk"
+      },
+      {
+        "at": 190,
+        "val": "Mantap Ngab"
+      }
+    ],
+    "frames": [
+      {
+        "type": "STATIC",
+        "duration": 60,
+        "world": "world",
+        "xyz": [-173.5,98.5,-213.5],
+        "yp": [52.5,26.0]
+      },
+      {
+        "type": "STATIC",
+        "duration": 60,
+        "world": "world",
+        "xyz": [-290.0,81.5,-117.5],
+        "yp": [-123.7,14.7]
+      },
+      {
+        "type": "MOVING",
+        "duration": 200,
+        "world": "world",
+        "xyz": [-251.7,88.0,-87.0],
+        "yp": [-154.7,16.7],
+        "to": [-200.2,88.0,-195.7]
+      }
+    ],
+    "finish": "DEMO_OBJECTS.action2"
+  },
+  "obj1": {
+    "type": "OBJECTIVE",
+    "subtype": "GO_TO_LOCATION",
+    "destination": {
+      "world": "world",
+      "borders": [
+        [-226.0,63.0,-192.0],
+        [-214.0,70.0,-178.0]
+      ]
+    },
+    "finish": "DEMO_OBJECTS.action3",
+    "message": "&7Pergi ke &aBalai RT&7, &9ngab&7!"
+  },
+  "obj2": {
+    "type": "OBJECTIVE",
+    "subtype": "KILL_MOB",
+    "mobToKill": {
+      "mobRef": "DEMO_OBJECTS.mob1",
+      "world": "world",
+      "location": [-220.0,64.0,-181.5,-180.0,0.0]
+    },
+    "finish": "DEMO_OBJECTS.action4",
+    "message": "&7Bantai &cPak RT&7, &9ngab&7!"
+  },
+  "obj3": {
+    "type": "OBJECTIVE",
+    "subtype": "KILL_MOB",
+    "mobToKill": {
+      "mobRef": "DEMO_OBJECTS.mob2",
+      "world": "world",
+      "location": [-220.0,64.0,-181.5,-180.0,0.0]
+    },
+    "finish": "DEMO_OBJECTS.event1",
+    "message": "&7Bantai &cHantu Pak RT&7, &9ngab&7!"
+  },
+  "mob1": {
+    "type": "MOB_CUSTOMIZER",
+    "customizer": {
+      "mobType": "ZOMBIE",
+      "xp": 30,
+      "name": "Pak RT",
+      "level": 40,
+      "stats": {
+        "health": 200,
+        "atk": 50
+      }
+    }
+  },
+  "mob2": {
+    "type": "MOB_CUSTOMIZER",
+    "customizer": {
+      "mobType": "CREEPER",
+      "name": "Hantu Pak RT",
+      "level": 25,
+      "xp": 25,
+      "explosionPower": 50,
+      "drops": [
+        "0.5:EUNBI:1",
+        "0.9:BREAD:2~3",
+        "0.75:STEAK:1~2"
+      ],
+      "stats": {
+        "health": 120,
+        "def": 130,
+        "mdef": 270,
+        "pen": 115
+      }
+    }
+  },
+  "event1": {
+    "type": "EVENT",
+    "events": [
+      {
+        "action": "SHOUT",
+        "value": "&7Beres &9Ngab!"
+      },
+      {
+        "action": "SHOUT",
+        "value": "&7Anda Hebat, &9Ngab!"
+      }
+    ]
+  },
+  "action1": {
+    "action": "SHOUT",
+    "value": "Tawuran Ngab!"
+  },
+  "action2": {
+    "action": "SET_OBJECTIVE",
+    "value": "DEMO_OBJECTS.obj1"
+  },
+  "action3": {
+    "action": "SET_OBJECTIVE",
+    "value": "DEMO_OBJECTS.obj2"
+  },
+  "action4": {
+    "action": "SET_OBJECTIVE",
+    "value": "DEMO_OBJECTS.obj3"
+  }
+}

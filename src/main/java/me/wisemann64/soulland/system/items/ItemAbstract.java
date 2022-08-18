@@ -18,6 +18,7 @@ public abstract class ItemAbstract implements Cloneable {
     private List<String> lore = null;
     protected int count = 1;
     protected boolean glow;
+    protected String lock = null;
 
     public ItemAbstract(String id, ItemType type, Material material) {
         this.id = id;
@@ -31,6 +32,7 @@ public abstract class ItemAbstract implements Cloneable {
         SLItems.setString(ret,"type",type.toString());
         SLItems.hideAllFlags(ret);
         if (glow) SLItems.setGlowing(ret);
+        if (lock != null) SLItems.setString(ret,"lock", lock);
         return ret;
     }
 
@@ -42,6 +44,7 @@ public abstract class ItemAbstract implements Cloneable {
         ItemType type = ItemType.valueOf(SLItems.getString(from,"type"));
         ItemAbstract i0 = SoulLand.getItemManager().getItem(id).clone();
         i0.setCount(from.getAmount());
+        i0.setLock(SLItems.getString(from,"lock"));
         switch (type) {
             case WEAPON, ARMOR -> {
                 ItemModifiable iw = (ItemModifiable) i0;
@@ -115,5 +118,9 @@ public abstract class ItemAbstract implements Cloneable {
 
     public void setGlow(boolean glow) {
         this.glow = glow;
+    }
+
+    public void setLock(String key) {
+        this.lock = key;
     }
 }

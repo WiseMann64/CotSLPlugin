@@ -1,7 +1,7 @@
 package me.wisemann64.soulland.system.commands;
 
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.gameplay.cutscene.CutsceneDialogue;
+import me.wisemann64.soulland.gameplay.objects.ObjectSource;
 import me.wisemann64.soulland.system.combat.Damage;
 import me.wisemann64.soulland.system.combat.DamageType;
 import me.wisemann64.soulland.system.items.ItemAbstract;
@@ -36,6 +36,9 @@ public class TestCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length < 1) return false;
+        switch (strings[0]) {
+            case "json" -> json();
+        }
         if (!(commandSender instanceof Player pl)) return false;
         SLPlayer p = SoulLand.getPlayerManager().getPlayer(pl);
         if (p == null) return false;
@@ -124,9 +127,9 @@ public class TestCommand implements TabExecutor {
                 new MobGeneric(pl.getWorld(),c).spawn(l);
             }
             case "parse" -> {
-                String a ="-a 0 -b 1 -c 2 -d mantap -e \"mantap\" -f \"ngab1 ngab2 ngab3\"";
-                System.out.println(a);
-                System.out.println(CommandParser.parse(a));
+                MobGeneric.Customizer c = SoulLand.getObjectParser().getMobGenericCustomizer("mob2", ObjectSource.DEMO_OBJECTS);
+                Location l = p.getHandle().getLocation();
+                new MobGeneric(pl.getWorld(),c).spawn(l);
             }
         }
         return false;
@@ -137,5 +140,9 @@ public class TestCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length == 1) return Arrays.asList(args);
         return null;
+    }
+
+    void json() {
+
     }
 }

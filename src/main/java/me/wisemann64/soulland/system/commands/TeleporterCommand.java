@@ -20,16 +20,7 @@ import java.util.*;
 
 public class TeleporterCommand implements TabExecutor {
 
-    private static class Destination {
-        private final String world;
-        private final double[] xyz;
-        private final float[] yp;
-
-        Destination(String world, double[] xyz, float[] yp) {
-            this.world = world;
-            this.xyz = xyz;
-            this.yp = yp;
-        }
+    private record Destination(String world, double[] xyz, float[] yp) {
     }
 
     private final YamlConfiguration config;

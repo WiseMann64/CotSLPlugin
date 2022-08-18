@@ -12,6 +12,10 @@ public class Frame {
         this.loc = loc;
     }
 
+    public Frame frameAt(int tick) {
+        return this;
+    }
+
     public int getDuration() {
         return duration;
     }

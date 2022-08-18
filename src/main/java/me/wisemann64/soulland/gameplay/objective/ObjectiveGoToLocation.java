@@ -27,7 +27,7 @@ public class ObjectiveGoToLocation extends Objective {
         AtomicBoolean b = new AtomicBoolean(false);
         game.getRegisteredPlayers().forEach(p -> {
             Location l = p.getLocation();
-            if (l.getWorld().equals(world) && destination.contains(l.getX(),l.getY(),l.getZ())) b.set(true);
+            if (world.equals(l.getWorld()) && destination.contains(l.getX(),l.getY(),l.getZ())) b.set(true);
         });
         return b.get();
     }

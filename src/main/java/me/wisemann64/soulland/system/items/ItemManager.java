@@ -39,6 +39,7 @@ public class ItemManager {
             i.setName(sect.getString("name"));
             i.setLore(sect.getStringList("lore"));
             i.setGlow(sect.getBoolean("glow",false));
+            i.setLock(sect.getString("lock",null));
 
             if (i instanceof ItemModifiable im) {
                 ConfigurationSection mod = sect.getConfigurationSection("mod");

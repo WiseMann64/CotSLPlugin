@@ -134,6 +134,14 @@ WEIRD_KEY:
   type: KEY
   material: TRIPWIRE_HOOK
   name: "Weird Key"
+  key:
+    lock: "weirdo"
+
+TEST_KEY:
+  type: KEY
+  material: TRIPWIRE_HOOK
+  name: "Test Key"
+  lock: "049e7a3c-a0cb-471d-95d9-54d0b7449f0c"
 
 BASIC_HELMET:
   type: ARMOR

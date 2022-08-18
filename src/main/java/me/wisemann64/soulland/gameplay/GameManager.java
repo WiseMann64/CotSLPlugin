@@ -2,22 +2,15 @@ package me.wisemann64.soulland.gameplay;
 
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.gameplay.cutscene.Cutscene;
-import me.wisemann64.soulland.gameplay.cutscene.CutsceneDialogue;
-import me.wisemann64.soulland.gameplay.cutscene.CutsceneEvent;
 import me.wisemann64.soulland.gameplay.cutscene.Frame;
 import me.wisemann64.soulland.gameplay.objective.Objective;
-import me.wisemann64.soulland.gameplay.objective.ObjectiveGoToLocation;
-import me.wisemann64.soulland.gameplay.objective.ObjectiveKillMob;
-import me.wisemann64.soulland.system.mobs.MobCreeper;
-import me.wisemann64.soulland.system.mobs.MobGeneric;
-import me.wisemann64.soulland.system.mobs.MobGenericTypes;
+import me.wisemann64.soulland.gameplay.objects.ObjectParser;
+import me.wisemann64.soulland.gameplay.objects.ObjectSource;
 import me.wisemann64.soulland.system.players.SLPlayer;
-import me.wisemann64.soulland.system.players.Stats;
 import me.wisemann64.soulland.system.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,7 +22,10 @@ import java.util.function.Consumer;
 public class GameManager {
 
     private final List<SLPlayer> registeredPlayers = new ArrayList<>();
-
+    private ObjectParser op() {
+        return SoulLand.getObjectParser();
+    } 
+    
     private GameState state;
 
     private Cutscene currentCutscene = null;
@@ -63,35 +59,7 @@ public class GameManager {
     private void startDemo() {
         registeredPlayers.clear();
         registeredPlayers.addAll(SoulLand.getPlayerManager().getPlayers());
-        Cutscene c = new Cutscene();
-        c.addFrame(new Frame(60,new Location(Bukkit.getWorld("world"),-173.5,98.5,-213.5,52.5F,26.0F)));
-        c.addDialogue(new CutsceneDialogue(10, "Halo Ngab"));
-        c.addDialogue(new CutsceneDialogue(10, "Halo Ngabzz"));
-        c.addDialogue(new CutsceneDialogue(10, "Halo Ngabzzz"));
-        c.addDialogue(new CutsceneDialogue(5, "^_^"));
-        c.addDialogue(new CutsceneDialogue(45, "Mantap!"));
-        c.addDialogue(new CutsceneDialogue(120, "ga keliatan wkwkwk"));
-        c.setFinishEvent(gm -> {
-            BoundingBox bb = new BoundingBox(-226.0,63.0,-192.0,-214.0,70.0,-178.0);
-            ObjectiveGoToLocation g = new ObjectiveGoToLocation(bb,Bukkit.getWorld("world"));
-            g.setFinishEvent(gm1 -> {
-                Location l = new Location(Bukkit.getWorld("world"),-220.0,64.0,-181.5,-180.0f,0.0f);
-                MobGeneric.Customizer cust = new MobGeneric.Customizer(MobGenericTypes.ZOMBIE);
-                cust.setXp(30);
-                cust.setName("Pak RT");
-                cust.setLevel(40);
-                cust.getInitStats().put(Stats.HEALTH,200D);
-                cust.getInitStats().put(Stats.ATK,50D);
-                ObjectiveKillMob obj = new ObjectiveKillMob(l,cust);
-                obj.setFinishEvent(gm2 -> {
-                    ObjectiveKillMob obj1 = new ObjectiveKillMob(l, MobCreeper.class,"Hantu Pak RT");
-                    obj1.setFinishEvent(gm3 -> shout("Beres Ngab!"));
-                    gm2.setObjective(obj1);
-                });
-                gm1.setObjective(obj);
-            });
-            gm.setObjective(g);
-        });
+        Cutscene c = op().getCutscene("cs1", ObjectSource.DEMO_OBJECTS);
         c.play(new Location(Bukkit.getWorld("world"),-204.5,67,-202.5,90F,-15F));
     }
 
@@ -117,7 +85,7 @@ public class GameManager {
             p.getHandle().setGameMode(GameMode.SURVIVAL);
             p.getHandle().teleport(l);
         });
-        if (currentCutscene.getFinishEvent() != null) currentCutscene.getFinishEvent().accept(this);
+        if (currentCutscene.finishEvent() != null) currentCutscene.finishEvent().accept(this);
         currentCutscene = null;
         cutsceneTick = 0;
     }
@@ -131,7 +99,7 @@ public class GameManager {
         Frame f = currentCutscene.getFrameAt(cutsceneTick);
         registeredPlayers.forEach(p -> p.getHandle().teleport(f.getLocation()));
         Consumer<SLPlayer> c = currentCutscene.getDialogueAt(cutsceneTick);
-        currentCutscene.getEventAt(cutsceneTick).forEach(e -> e.getAction().accept(this));
+        currentCutscene.getEventAt(cutsceneTick).forEach(e -> e.action().accept(this));
         if (c != null) registeredPlayers.forEach(c);
     }
 
@@ -142,11 +110,12 @@ public class GameManager {
 
     public void setObjective(Objective o) {
         currentObjective = o;
-        if (o.getStartEvent() != null) o.getStartEvent().accept(this);
+        if (o.getMessage() != null) shout(o.getMessage());
+        if (o.startEvent() != null) o.startEvent().accept(this);
     }
 
     private void finishObjective() {
-        Consumer<GameManager> t = currentObjective.getFinishEvent();
+        Consumer<GameManager> t = currentObjective.finishEvent();
         currentObjective = null;
         if (t != null) t.accept(this);
     }

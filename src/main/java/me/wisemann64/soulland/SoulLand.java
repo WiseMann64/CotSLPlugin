@@ -2,6 +2,8 @@ package me.wisemann64.soulland;
 
 import me.wisemann64.soulland.gameplay.GameManager;
 import me.wisemann64.soulland.gameplay.GameState;
+import me.wisemann64.soulland.gameplay.objects.ObjectParser;
+import me.wisemann64.soulland.system.LockManager;
 import me.wisemann64.soulland.system.MobManager;
 import me.wisemann64.soulland.system.PlayerConfigManager;
 import me.wisemann64.soulland.system.PlayerManager;
@@ -29,6 +31,8 @@ public final class SoulLand extends JavaPlugin {
     private static MobManager mobManager;
     private static ItemManager itemManager;
     private static GameManager gameManager;
+    private static LockManager lockManager;
+    private static ObjectParser objectParser;
 
     private BukkitRunnable pluginTick;
 
@@ -62,6 +66,9 @@ public final class SoulLand extends JavaPlugin {
 
         gameManager = new GameManager();
         gameManager.setState(GameState.DEVELOPMENT);
+
+        lockManager = new LockManager();
+        objectParser = new ObjectParser();
     }
 
     @Override
@@ -114,6 +121,14 @@ public final class SoulLand extends JavaPlugin {
         SLPlayer a = playerManager.getPlayer(uuid);
         if (a != null) return a;
         return mobManager.getMob(uuid);
+    }
+
+    public static LockManager getLockManager() {
+        return lockManager;
+    }
+
+    public static ObjectParser getObjectParser() {
+        return objectParser;
     }
 
     public static void startDemo() {
