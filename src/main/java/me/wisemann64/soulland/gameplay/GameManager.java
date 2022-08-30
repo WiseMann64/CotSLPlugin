@@ -85,7 +85,9 @@ public class GameManager {
             p.getHandle().setGameMode(GameMode.SURVIVAL);
             p.getHandle().teleport(l);
         });
-        if (currentCutscene.finishEvent() != null) currentCutscene.finishEvent().accept(this);
+        if (currentCutscene.finishEvent() != null) {
+            currentCutscene.finishEvent().accept(this);
+        }
         currentCutscene = null;
         cutsceneTick = 0;
     }
@@ -138,5 +140,8 @@ public class GameManager {
 
     public void action(@NotNull Consumer<SLPlayer> action) {
         registeredPlayers.forEach(action);
+    }
+    public void playSequence(@NotNull Sequence seq) {
+        seq.play(this);
     }
 }

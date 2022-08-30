@@ -2,8 +2,8 @@ package me.wisemann64.soulland;
 
 import me.wisemann64.soulland.gameplay.GameManager;
 import me.wisemann64.soulland.gameplay.GameState;
+import me.wisemann64.soulland.gameplay.lock.LockManager;
 import me.wisemann64.soulland.gameplay.objects.ObjectParser;
-import me.wisemann64.soulland.system.LockManager;
 import me.wisemann64.soulland.system.MobManager;
 import me.wisemann64.soulland.system.PlayerConfigManager;
 import me.wisemann64.soulland.system.PlayerManager;

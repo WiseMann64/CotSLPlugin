@@ -2,15 +2,15 @@ package me.wisemann64.soulland.gameplay.objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import me.wisemann64.soulland.SoulLand;
+import me.wisemann64.soulland.gameplay.Dialogue;
 import me.wisemann64.soulland.gameplay.GameManager;
 import me.wisemann64.soulland.gameplay.GameplayEvent;
-import me.wisemann64.soulland.gameplay.cutscene.Cutscene;
-import me.wisemann64.soulland.gameplay.cutscene.CutsceneDialogue;
-import me.wisemann64.soulland.gameplay.cutscene.Frame;
-import me.wisemann64.soulland.gameplay.cutscene.MovingFrame;
+import me.wisemann64.soulland.gameplay.Sequence;
+import me.wisemann64.soulland.gameplay.cutscene.*;
 import me.wisemann64.soulland.gameplay.objective.Objective;
 import me.wisemann64.soulland.gameplay.objective.ObjectiveGoToLocation;
 import me.wisemann64.soulland.gameplay.objective.ObjectiveKillMob;
@@ -19,6 +19,7 @@ import me.wisemann64.soulland.system.mobs.MobGenericTypes;
 import me.wisemann64.soulland.system.players.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,6 @@ import java.util.function.Consumer;
 
 public class ObjectParser {
 
-    private static final String a = SoulLand.getPlugin().getDataFolder().getPath() + "/";
     private static Gson GSON;
 
     private static final EnumMap<ObjectSource,JsonObject> objects = new EnumMap<>(ObjectSource.class);
@@ -51,11 +51,23 @@ public class ObjectParser {
         }
     }
 
-    // TODO make start and finish accepts action or event
-
     private void startAndFinish(JsonObject base, GameplayEvent ev) {
-        if (base.has("start") && !base.get("start").isJsonNull()) ev.setStartEventReference(base.get("start").getAsString());
-        if (base.has("finish") && !base.get("finish").isJsonNull()) ev.setFinishEventReference(base.get("finish").getAsString());
+        if (base.has("start")) {
+            JsonElement start = base.get("start");
+            if (start.isJsonPrimitive()) {
+                ev.setStartEventReference(start.getAsString());
+            } else {
+                ev.setStartEventReference(start.toString());
+            }
+        }
+        if (base.has("finish")) {
+            JsonElement finish = base.get("finish");
+            if (finish.isJsonPrimitive()) {
+                ev.setFinishEventReference(finish.getAsString());
+            } else {
+                ev.setFinishEventReference(finish.toString());
+            }
+        }
     }
 
     private void message(JsonObject base, Objective o) {
@@ -73,7 +85,7 @@ public class ObjectParser {
         Cutscene ret = new Cutscene();
         if (key0.has("dialogues")) {
             JsonArray dialogues = key0.get("dialogues").getAsJsonArray();
-            dialogues.forEach(e -> ret.addDialogue(new CutsceneDialogue(e.getAsJsonObject().get("at").getAsInt(),e.getAsJsonObject().get("val").getAsString())));
+            dialogues.forEach(e -> ret.addDialogue(new DialogueLine(e.getAsJsonObject().get("at").getAsInt(),e.getAsJsonObject().get("val").getAsString())));
         }
         if (key0.has("frames")) {
             JsonArray frames = key0.get("frames").getAsJsonArray();
@@ -246,15 +258,49 @@ public class ObjectParser {
         if (obj == null) return null;
         if (!obj.has("action") || !obj.has("value")) return null;
         String action = obj.get("action").getAsString();
-        String value = obj.get("value").getAsString();
+        JsonElement value = obj.get("value");
         switch (ActionTypes.valueOf(action)) {
             case SHOUT -> {
-                return gm -> gm.shout(obj.get("value").getAsString());
+                return gm -> gm.shout(value.getAsString());
             }
             case SET_OBJECTIVE -> {
-                RefSource a = parse(value);
+                RefSource a = parse(value.getAsString());
                 Objective o = getObjective(a.ref,a.source);
                 return o == null ? null : gm -> gm.setObjective(o);
+            }
+            case TELEPORT -> {
+                JsonObject value1 = value.getAsJsonObject();
+                double x = value1.get("x").getAsDouble();
+                double y = value1.get("y").getAsDouble();
+                double z = value1.get("z").getAsDouble();
+                float yaw = (float) value1.get("yaw").getAsDouble();
+                float pitch = (float) value1.get("pitch").getAsDouble();
+                String world = value1.get("world").getAsString();
+                Location l = new Location(Bukkit.getWorld(world),x,y,z,yaw,pitch);
+                return gm -> gm.action(p -> p.getHandle().teleport(l));
+            }
+            case FILL_BLOCK -> {
+                JsonObject value1 = value.getAsJsonObject();
+                int[] xyz = {0,0,0};
+                int[] wid = {0,0,0};
+
+                JsonArray corner = value1.getAsJsonArray("corner");
+                xyz[0] = corner.get(0).getAsInt();
+                xyz[1] = corner.get(1).getAsInt();
+                xyz[2] = corner.get(2).getAsInt();
+
+                JsonArray width = value1.getAsJsonArray("width");
+                wid[0] = width.get(0).getAsInt();
+                wid[1] = width.get(1).getAsInt();
+                wid[2] = width.get(2).getAsInt();
+
+                Material mat = Material.valueOf(value1.get("material").getAsString());
+                World w = Bukkit.getWorld(value1.get("world").getAsString());
+
+                return gm -> {
+                    for (int x = 0 ; x <= wid[0] ; x++) for (int y = 0 ; y <= wid[1] ; y++) for (int z = 0 ; z <= wid[2] ; z++)
+                        w.getBlockAt(xyz[0]+x,xyz[1]+y,xyz[2]+z).setType(mat);
+                };
             }
         }
         return null;
@@ -262,17 +308,88 @@ public class ObjectParser {
 
     public Consumer<GameManager> getEventOrAction(@Nullable String ref) {
         if (ref == null) return null;
-        String[] reff = ref.split("\\.");
-        ObjectSource os = ObjectSource.valueOf(reff[0]);
-        String ref1 = reff[1];
-        Consumer<GameManager> ret = getEvent(ref1,os);
-        if (ret == null) return getAction(ref1,os);
-        else return ret;
+        RefSource rs = parse(ref);
+        if (rs != null) {
+            Consumer<GameManager> ret = getEvent(rs.ref,rs.source);
+            return ret == null ? getAction(rs.ref,rs.source) : ret;
+        }
+        JsonElement o;
+        try {
+            o = GSON.fromJson(ref, JsonElement.class);
+        } catch (Exception e) {
+            return null;
+        }
+        if (o.isJsonArray()) {
+            JsonArray o1 = o.getAsJsonArray();
+            List<Consumer<GameManager>> list = new ArrayList<>();
+            o1.forEach(e -> {
+                Consumer<GameManager> c = getAction(e.getAsJsonObject());
+                if (c != null) list.add(c);
+            });
+            return gm -> list.forEach(c -> c.accept(gm));
+        }
+        if (o.isJsonObject()) {
+            JsonObject o1 = o.getAsJsonObject();
+            Consumer<GameManager> ret = getEvent(o1);
+            return ret == null ? getAction(o1) : ret;
+        }
+        return null;
+    }
+
+    public Dialogue getDialogue(String identifier, ObjectSource source) {
+        JsonObject json = objects.get(source);
+        if (json == null) return null;
+        if (!json.has(identifier)) return null;
+        return getDialogue(json.getAsJsonObject(identifier));
+    }
+
+    public Dialogue getDialogue(@Nullable JsonObject obj) {
+        if (obj == null) return null;
+        if (!obj.has("type")) return null;
+        if (obj.get("type").isJsonNull()) return null;
+        if (!"DIALOGUE".equals(obj.get("type").getAsString())) return null;
+
+        JsonArray dialogues = obj.getAsJsonArray("dialogues");
+        Dialogue ret = new Dialogue();
+        dialogues.forEach(e -> {
+            int at = e.getAsJsonObject().get("at").getAsInt();
+            String text = e.getAsJsonObject().get("val").getAsString();
+            ret.addDialogue(at,text);
+        });
+        return ret;
+    }
+
+    public Sequence getSequence(String identifier, ObjectSource source) {
+        JsonObject json = objects.get(source);
+        if (json == null) return null;
+        if (!json.has(identifier)) return null;
+        return getSequence(json.getAsJsonObject(identifier));
+    }
+
+    public Sequence getSequence(@Nullable JsonObject obj) {
+        if (obj == null) return null;
+        if (!obj.has("type")) return null;
+        if (obj.get("type").isJsonNull()) return null;
+        if (!"SEQUENCE".equals(obj.get("type").getAsString())) return null;
+
+        JsonArray actions = obj.getAsJsonArray("actions");
+        Sequence ret = new Sequence();
+        actions.forEach(e -> {
+            int at = e.getAsJsonObject().get("at").getAsInt();
+            JsonObject value = e.getAsJsonObject().getAsJsonObject("value");
+            Consumer<GameManager> ac = getAction(value);
+            if (ac != null) ret.addAction(new Action(at,ac));
+        });
+        return ret;
     }
 
     private RefSource parse(String ref) {
         String[] reff = ref.split("\\.");
-        return new RefSource(reff[1],ObjectSource.valueOf(reff[0]));
+        try {
+            return new RefSource(reff[1],ObjectSource.valueOf(reff[0]));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private record RefSource(String ref, ObjectSource source) {

@@ -130,6 +130,7 @@ PATUNG_BATU:
   lore:
     - "&oPatung batu yeuh ngab"
     - "&oNGAB NGAB NGAB NGAB"
+
 WEIRD_KEY:
   type: KEY
   material: TRIPWIRE_HOOK
@@ -142,6 +143,11 @@ TEST_KEY:
   material: TRIPWIRE_HOOK
   name: "Test Key"
   lock: "049e7a3c-a0cb-471d-95d9-54d0b7449f0c"
+
+GENERIC_KEY:
+  type: KEY
+  material: TRIPWIRE_HOOK
+  name: "Key"
 
 BASIC_HELMET:
   type: ARMOR

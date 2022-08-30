@@ -116,11 +116,13 @@ public abstract class ItemAbstract implements Cloneable {
         return this;
     }
 
-    public void setGlow(boolean glow) {
+    public ItemAbstract setGlow(boolean glow) {
         this.glow = glow;
+        return this;
     }
 
-    public void setLock(String key) {
+    public ItemAbstract setLock(String key) {
         this.lock = key;
+        return this;
     }
 }

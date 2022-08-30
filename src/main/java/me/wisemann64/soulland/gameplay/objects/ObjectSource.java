@@ -6,6 +6,7 @@ import java.io.File;
 
 public enum ObjectSource {
 
+    $ACTIONS("gameplay/actions.json"),
     DEMO_OBJECTS("gameplay/demo/objects.json"),
     ;
 

@@ -14,8 +14,8 @@ import java.util.function.Consumer;
 public class Cutscene implements GameplayEvent {
 
     final List<Frame> frames = new ArrayList<>();
-    final List<CutsceneDialogue> dialogues = new ArrayList<>();
-    final List<CutsceneEvent> events = new ArrayList<>();
+    final List<DialogueLine> dialogues = new ArrayList<>();
+    final List<Action> events = new ArrayList<>();
     String finishEventRef = null;
     String startEventRef = null;
     Consumer<GameManager> finishEvent = null;
@@ -26,7 +26,7 @@ public class Cutscene implements GameplayEvent {
         return this;
     }
 
-    public Cutscene addDialogue(CutsceneDialogue dialogue) {
+    public Cutscene addDialogue(DialogueLine dialogue) {
         dialogues.add(dialogue);
         return this;
     }
@@ -63,7 +63,7 @@ public class Cutscene implements GameplayEvent {
     }
 
     public Consumer<SLPlayer> getDialogueAt(int tick) {
-        List<CutsceneDialogue> a = new ArrayList<>();
+        List<DialogueLine> a = new ArrayList<>();
         dialogues.forEach(d -> {
             if (d.tickAt() == tick) a.add(d);
         });
@@ -71,8 +71,8 @@ public class Cutscene implements GameplayEvent {
         return (t) -> a.forEach(msg -> t.sendMessage(msg.getMessage()));
     }
 
-    public List<CutsceneEvent> getEventAt(int tick) {
-        List<CutsceneEvent> g = new ArrayList<>();
+    public List<Action> getEventAt(int tick) {
+        List<Action> g = new ArrayList<>();
         events.forEach(e -> {
             if (e.tickAt() == tick) g.add(e);
         });

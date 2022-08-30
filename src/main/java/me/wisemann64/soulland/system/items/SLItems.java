@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.UUID;
 
@@ -100,5 +101,25 @@ public class SLItems {
         meta.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier(UUID.randomUUID(),"armor",0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS,new AttributeModifier(UUID.randomUUID(),"armor_toughness",0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         item.setItemMeta(meta);
+    }
+
+    public static ItemAbstract createKey(@Nullable  Material mat, @Nullable String name, @NotNull String lock) {
+        ItemAbstract key = SoulLand.getItemManager().getItem("GENERIC_KEY",1).setLock(lock);
+        if (mat != null) {
+            try {
+                Field f = key.getClass().getDeclaredField("material");
+                f.setAccessible(true);
+                f.set(key,mat);
+                f.setAccessible(false);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                System.err.println("Key material failed to change");
+            }
+        }
+        if (name != null) key.setName(name);
+        return key;
+    }
+
+    public static ItemAbstract createKey(String lock) {
+        return createKey(null,null,lock);
     }
 }

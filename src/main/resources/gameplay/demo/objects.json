@@ -47,7 +47,55 @@
         "to": [-200.2,88.0,-195.7]
       }
     ],
-    "finish": "DEMO_OBJECTS.action2"
+    "finish": {
+      "action": "SET_OBJECTIVE",
+      "value": "DEMO_OBJECTS.obj1"
+    }
+  },
+  "dia1": {
+    "type": "DIALOGUE",
+    "dialogues": [
+      {
+        "at": 0,
+        "val": "&7Oriosta"
+      },
+      {
+        "at": 20,
+        "val": "&7Selene Delgado Lopez"
+      },
+      {
+        "at": 45,
+        "val": "&7Joahamyeon &4galili&7,"
+      },
+      {
+        "at": 85,
+        "val": "&7Innalillahi wa innailaihi rojiun"
+      },
+      {
+        "at": 300,
+        "val": "&4Selene Delgado Lopez"
+      },
+      {
+        "at": 302,
+        "val": "&4Selene Delgado Lopez"
+      },
+      {
+        "at": 304,
+        "val": "&4Selene Delgado Lopez"
+      },
+      {
+        "at": 306,
+        "val": "&4Selene Delgado Lopez"
+      },
+      {
+        "at": 308,
+        "val": "&4Selene Delgado Lopez"
+      },
+      {
+        "at": 310,
+        "val": "&4Selene Delgado Lopez"
+      }
+    ]
   },
   "obj1": {
     "type": "OBJECTIVE",
@@ -59,7 +107,10 @@
         [-214.0,70.0,-178.0]
       ]
     },
-    "finish": "DEMO_OBJECTS.action3",
+    "finish": {
+      "action": "SET_OBJECTIVE",
+      "value": "DEMO_OBJECTS.obj2"
+    },
     "message": "&7Pergi ke &aBalai RT&7, &9ngab&7!"
   },
   "obj2": {
@@ -70,7 +121,16 @@
       "world": "world",
       "location": [-220.0,64.0,-181.5,-180.0,0.0]
     },
-    "finish": "DEMO_OBJECTS.action4",
+    "finish": [
+      {
+        "action": "SHOUT",
+        "value": "&7&cPak RT&7 jadi hantu &9ngab&7!!!1!1!1!111"
+      },
+      {
+        "action": "SET_OBJECTIVE",
+        "value": "DEMO_OBJECTS.obj3"
+      }
+    ],
     "message": "&7Bantai &cPak RT&7, &9ngab&7!"
   },
   "obj3": {
@@ -81,7 +141,10 @@
       "world": "world",
       "location": [-220.0,64.0,-181.5,-180.0,0.0]
     },
-    "finish": "DEMO_OBJECTS.event1",
+    "finish": {
+      "action": "SHOUT",
+      "value": "&7Beres &9ngab&7, Anda hebat &9ngab&7!"
+    },
     "message": "&7Bantai &cHantu Pak RT&7, &9ngab&7!"
   },
   "mob1": {
@@ -118,33 +181,66 @@
       }
     }
   },
-  "event1": {
-    "type": "EVENT",
-    "events": [
+  "teleport1": {
+    "action": "TELEPORT",
+    "value": {
+      "world": "world",
+      "x": 0,
+      "y": 128,
+      "z": 9,
+      "yaw": 0.0,
+      "pitch": 0.0
+    }
+  },
+  "sequence1": {
+    "type": "SEQUENCE",
+    "actions": [
       {
-        "action": "SHOUT",
-        "value": "&7Beres &9Ngab!"
+        "at": 0,
+        "value": {
+          "action": "TELEPORT",
+          "value": {
+            "world": "world",
+            "x": -153.5,
+            "y": 98.5,
+            "z": -213.5,
+            "yaw": 0.0,
+            "pitch": 0.0
+          }
+        }
       },
       {
-        "action": "SHOUT",
-        "value": "&7Anda Hebat, &9Ngab!"
+        "at": 240,
+        "value": {
+          "action": "TELEPORT",
+          "value": {
+            "world": "world",
+            "x": -173.5,
+            "y": 98.5,
+            "z": -213.5,
+            "yaw": 0.0,
+            "pitch": 0.0
+          }
+        }
       }
     ]
   },
-  "action1": {
-    "action": "SHOUT",
-    "value": "Tawuran Ngab!"
+  "clear1": {
+    "action": "FILL_BLOCK",
+    "value": {
+      "corner": [-226,72,-187],
+      "width": [4,1,1],
+      "material": "AIR",
+      "world": "world"
+    }
   },
-  "action2": {
-    "action": "SET_OBJECTIVE",
-    "value": "DEMO_OBJECTS.obj1"
-  },
-  "action3": {
-    "action": "SET_OBJECTIVE",
-    "value": "DEMO_OBJECTS.obj2"
-  },
-  "action4": {
-    "action": "SET_OBJECTIVE",
-    "value": "DEMO_OBJECTS.obj3"
+  "open": {
+    "action": "FILL_BLOCK",
+    "value": {
+      "corner": [-240,11,-178],
+      "width": [7,0,0],
+      "material": "AIR",
+      "world": "world"
+    }
   }
 }

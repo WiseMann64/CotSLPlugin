@@ -1,0 +1,48 @@
+{
+  "lock": [
+    {
+      "x": -233,
+      "y": 23,
+      "z": -113,
+      "world": "world",
+      "type": "ABSOLUTE"
+    },
+    {
+      "x": -198,
+      "y": 63,
+      "z": -185,
+      "world": "world",
+      "type": "ABSOLUTE"
+    },
+    {
+      "x": -223,
+      "y": 63,
+      "z": -167,
+      "world": "world",
+      "type": "ABSOLUTE"
+    },
+    {
+      "x": -195,
+      "y": 64,
+      "z": -169,
+      "world": "world",
+      "type": "ABSOLUTE"
+    },
+    {
+      "x": -237,
+      "y": 17,
+      "z": -158,
+      "world": "world",
+      "type": "LOCKED",
+      "key": "demo:ddc1d2aa-f237-437a-a082-c1be0c0d115f"
+    },
+    {
+      "x": -236,
+      "y": 17,
+      "z": -158,
+      "world": "world",
+      "type": "LOCKED",
+      "key": "demo:ddc1d2aa-f237-437a-a082-c1be0c0d115f"
+    }
+  ]
+}

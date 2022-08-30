@@ -4,6 +4,6 @@ import me.wisemann64.soulland.gameplay.GameManager;
 
 import java.util.function.Consumer;
 
-public record CutsceneEvent(int tickAt, Consumer<GameManager> action) {
+public record Action(int tickAt, Consumer<GameManager> action) {
 
 }

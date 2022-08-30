@@ -3,6 +3,7 @@ package me.wisemann64.soulland.system.commands;
 import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.system.items.ItemAbstract;
 import me.wisemann64.soulland.system.items.ItemModifiable;
+import me.wisemann64.soulland.system.items.SLItems;
 import me.wisemann64.soulland.system.players.SLPlayer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
@@ -19,7 +20,7 @@ import java.util.Set;
 public class ItemCommand implements TabExecutor {
 
     private final Set<String> itemIds = SoulLand.getItemManager().getItemIds();
-    private final String[] args = {"get","modify"};
+    private final String[] args = {"get","modify","key"};
     private final String[] args$modify = {"slot","upgrade",/*"power"*/};
 
     @Override
@@ -44,6 +45,7 @@ public class ItemCommand implements TabExecutor {
             }
             p.getHandle().getInventory().addItem(i.setCount(count).toItem());
         }
+        if (args.length > 1 && args[0].equals("key")) p.getHandle().getInventory().addItem(SLItems.createKey(args[1]).setCount(1).toItem());
         if (args.length == 3 && args[0].equals("modify")) {
             String a2 = args[2];
             ItemAbstract i = ItemAbstract.fromItem(pl.getInventory().getItemInMainHand());

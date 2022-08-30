@@ -1,10 +1,12 @@
 package me.wisemann64.soulland.system.commands;
 
 import me.wisemann64.soulland.SoulLand;
+import me.wisemann64.soulland.gameplay.Dialogue;
 import me.wisemann64.soulland.gameplay.objects.ObjectSource;
 import me.wisemann64.soulland.system.combat.Damage;
 import me.wisemann64.soulland.system.combat.DamageType;
 import me.wisemann64.soulland.system.items.ItemAbstract;
+import me.wisemann64.soulland.system.items.ItemKey;
 import me.wisemann64.soulland.system.items.SLItems;
 import me.wisemann64.soulland.system.mobs.*;
 import me.wisemann64.soulland.system.players.SLPlayer;
@@ -126,11 +128,13 @@ public class TestCommand implements TabExecutor {
                 c.setType(MobGenericTypes.CREEPER);
                 new MobGeneric(pl.getWorld(),c).spawn(l);
             }
-            case "parse" -> {
-                MobGeneric.Customizer c = SoulLand.getObjectParser().getMobGenericCustomizer("mob2", ObjectSource.DEMO_OBJECTS);
-                Location l = p.getHandle().getLocation();
-                new MobGeneric(pl.getWorld(),c).spawn(l);
+            case "parse" -> SoulLand.getObjectParser().getDialogue("dia1",ObjectSource.DEMO_OBJECTS).play(SoulLand.getGameManager());
+            case "sequence" -> SoulLand.getGameManager().playSequence(SoulLand.getObjectParser().getSequence("sequence1",ObjectSource.DEMO_OBJECTS));
+            case "key" -> {
+                ItemAbstract a = SoulLand.getItemManager().getItem("GENERIC_KEY").setLock("pali ngab ngab");
+                p.getHandle().getInventory().addItem(a.toItem());
             }
+            case "fill" -> SoulLand.getObjectParser().getAction("clear1",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
         }
         return false;
     }
