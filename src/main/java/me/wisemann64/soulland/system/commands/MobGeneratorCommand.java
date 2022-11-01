@@ -39,6 +39,7 @@ public class MobGeneratorCommand implements TabExecutor {
             String args = CommandParser.appender(Arrays.copyOfRange(arg,1,arg.length));
             Map<String,String> args1 = CommandParser.parse(args);
             if (args1.containsKey("n")) c.setName(args1.get("n"));
+            if (args1.containsKey("id")) c.setId(args1.get("id"));
             if (args1.containsKey("l")) c.setLevel(Integer.parseInt(args1.get("l")));
             if (args1.containsKey("xp")) c.setXp(Integer.parseInt(args1.get("xp")));
             if (args1.containsKey("ep")) c.setExplosionPower(Double.parseDouble(args1.get("ep")));

@@ -9,12 +9,14 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Door;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -72,6 +74,11 @@ public class PlayerListeners implements Listener {
                 if (lockDoor) v.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler
+    public void event(PlayerInteractEntityEvent v) {
+        if (v.getRightClicked() instanceof Villager) v.setCancelled(true);
     }
 
     @EventHandler

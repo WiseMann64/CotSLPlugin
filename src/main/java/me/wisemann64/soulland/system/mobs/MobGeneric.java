@@ -19,6 +19,7 @@ public class MobGeneric extends SLMob {
 
         MobGenericTypes type;
         String name = "Mob";
+        String id = null;
         int level = 0;
         int xp = 0;
         double explosionPower = 0;
@@ -31,6 +32,9 @@ public class MobGeneric extends SLMob {
 
         public void setName(String name) {
             this.name = name;
+        }
+        public void setId(String id) {
+            this.id = id;
         }
 
         public void setLevel(int level) {
@@ -65,7 +69,7 @@ public class MobGeneric extends SLMob {
     private final Customizer custom;
 
     public MobGeneric(World w, Customizer custom) {
-        super(w, custom.name, custom.level, true);
+        super(w, custom.name, custom.level, true, custom.id);
         this.custom = custom;
         genericConst(w);
     }

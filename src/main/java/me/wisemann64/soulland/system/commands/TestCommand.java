@@ -1,17 +1,14 @@
 package me.wisemann64.soulland.system.commands;
 
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.gameplay.Dialogue;
-import me.wisemann64.soulland.gameplay.objects.ObjectSource;
+import me.wisemann64.soulland.gameplay.objects.*;
 import me.wisemann64.soulland.system.combat.Damage;
 import me.wisemann64.soulland.system.combat.DamageType;
 import me.wisemann64.soulland.system.items.ItemAbstract;
-import me.wisemann64.soulland.system.items.ItemKey;
 import me.wisemann64.soulland.system.items.SLItems;
 import me.wisemann64.soulland.system.mobs.*;
 import me.wisemann64.soulland.system.players.SLPlayer;
 import me.wisemann64.soulland.system.players.Stats;
-import me.wisemann64.soulland.system.util.CommandParser;
 import me.wisemann64.soulland.system.util.Utils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Location;
@@ -20,6 +17,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -135,6 +134,89 @@ public class TestCommand implements TabExecutor {
                 p.getHandle().getInventory().addItem(a.toItem());
             }
             case "fill" -> SoulLand.getObjectParser().getAction("clear1",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "testmobwithid" -> SoulLand.getObjectParser().getAction("spawn_action",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "killmob" -> SoulLand.getObjectParser().getAction("despawn_action",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "tpmob" -> SoulLand.getObjectParser().getAction("move_action",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "moveset" -> {
+                SoulLand.getObjectParser().getAction("spawn_action",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+                SLMob hantuPakRT = SoulLand.getMobManager().getMobId("hantu_pak_rt");
+                hantuPakRT.getHandle().teleport(new Location(hantuPakRT.getWorld(),-228.5,63.0,-181.5));
+                Moveset m = new Moveset();
+                m.addMove(new MoveSin(301,0.75,60,'y',0.0f,0.0f,true,false));
+                hantuPakRT.applyMoveset(m);
+            }
+            case "moveset2" -> {
+                SoulLand.getObjectParser().getAction("spawn_action",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+                SLMob hantuPakRT = SoulLand.getMobManager().getMobId("hantu_pak_rt");
+                hantuPakRT.getHandle().teleport(new Location(hantuPakRT.getWorld(),-228.5,63.0,-181.5));
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                hantuPakRT.applyMoveset(m);
+            }
+            case "model" -> {
+                SLMobModel model = new ModelKripeng(p.getHandle().getWorld(), null,"kripeng");
+                model.spawn(p.getLocation());
+            }
+            case "tp1" -> {
+                SLMobModel model = SoulLand.getMobManager().getModelId("kripeng");
+                model.teleport(new Location(p.getHandle().getWorld(),-221.5,67.0,-158.5,90.0f,0.0f));
+            }
+            case "tp2" -> {
+                SLMobModel model = SoulLand.getMobManager().getModelId("kripeng");
+                model.teleport(new Location(p.getHandle().getWorld(),-268.5,63.0,-149.5,-128.8f,9.8f));
+            }
+            case "modelmoveset" -> {
+                SLMobModel model = new ModelKripeng(p.getHandle().getWorld(), null,"kripeng");
+                model.spawn(p.getLocation());
+                model.teleport(new Location(p.getHandle().getWorld(),-268.5,63.0,-149.5,-128.8f,9.8f));
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                model.applyMoveset(m);
+            }
+            case "model1" -> {
+                SLMobModel model = new ModelVillager(p.getLocation().getWorld(),"Dinnerbone",null, Villager.Type.SAVANNA, Villager.Profession.BUTCHER);
+                model.spawn(p.getLocation());
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                model.applyMoveset(m);
+            }
+            case "model2" -> {
+                SLMobModel model = new ModelVillager(p.getLocation().getWorld(),null,null, Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH);
+                model.spawn(p.getLocation());
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                model.applyMoveset(m);
+            }
+            case "model3" -> {
+                SLMobModel model = new ModelKripeng(p.getLocation().getWorld(),null,null);
+                model.spawn(p.getLocation());
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                model.applyMoveset(m);
+            }
+            case "model4" -> {
+                ModelWitherSkeleton w = new ModelWitherSkeleton(pl.getWorld(),"Anubis","anubis");
+                w.spawn(p.getLocation());
+                EntityEquipment eq = w.getEquipment();
+                eq.setHelmet(new ItemStack(Material.DRAGON_HEAD));
+                eq.setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
+                eq.setLeggings(new ItemStack(Material.GOLDEN_LEGGINGS));
+                eq.setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+                eq.setItemInMainHand(new ItemStack(Material.GOLDEN_HOE));
+                eq.setItemInOffHand(new ItemStack(Material.NETHER_STAR));
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                w.applyMoveset(m);
+            }
+            case "model5" -> {
+                ModelGeneric g = new ModelGeneric(pl.getWorld(), ModelGenerator.ModelType.WITHER_SKELETON, "Minang",null);
+                g.spawn(p.getLocation());
+                EntityEquipment eq = g.getEquipment();
+                eq.setChestplate(new ItemStack(Material.GOLDEN_CHESTPLATE));
+                Moveset m = SoulLand.getObjectParser().getMoveset("moveset1",ObjectSource.DEMO_OBJECTS);
+                g.applyMoveset(m);
+            }
+            case "spawnmod1" -> SoulLand.getObjectParser().getAction("spawnmod1",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "spawnmod2" -> SoulLand.getObjectParser().getAction("spawnmod2",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "movemob" -> SoulLand.getObjectParser().getAction("movemob",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "tpp1" -> SoulLand.getObjectParser().getAction("tp1",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "tpp2" -> SoulLand.getObjectParser().getAction("tp2",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "despawn" -> SoulLand.getObjectParser().getAction("despawnmodel",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
+            case "modelmove" -> SoulLand.getObjectParser().getAction("movemodel",ObjectSource.DEMO_OBJECTS).accept(SoulLand.getGameManager());
         }
         return false;
     }

@@ -1,7 +1,8 @@
 package me.wisemann64.soulland.system.mobs;
 
 import me.wisemann64.soulland.SoulLand;
-import me.wisemann64.soulland.gameplay.objective.ObjectiveKillMob;
+import me.wisemann64.soulland.gameplay.objective.TriggerKillMob;
+import me.wisemann64.soulland.gameplay.objects.Moveset;
 import me.wisemann64.soulland.system.combat.CombatEntity;
 import me.wisemann64.soulland.system.players.SLPlayer;
 import net.minecraft.server.v1_16_R3.DamageSource;
@@ -25,7 +26,7 @@ public abstract class SLMob implements CombatEntity {
 
     protected final CraftServer server = ((CraftServer)Bukkit.getServer());
     protected EntityCreature handle;
-    protected final int mobId;
+    protected final String mobId;
     protected org.bukkit.entity.Entity lastDamager = null;
     protected final MobAttributes attributes = new MobAttributes(this);
     private final EnumMap<EntityDamageEvent.DamageCause,Integer> envDamageCooldown = new EnumMap<>(EntityDamageEvent.DamageCause.class);
@@ -44,7 +45,7 @@ public abstract class SLMob implements CombatEntity {
     };
 
 
-    private ObjectiveKillMob objKill = null;
+    private TriggerKillMob trigger = null;
 
     public void tick() {
         handle.getBukkitEntity().setCustomName(parseTag(tag));
@@ -73,17 +74,21 @@ public abstract class SLMob implements CombatEntity {
     }
 
     public SLMob(World w, String name, int level) {
+        this(w,name,level,null);
+    }
+
+    public SLMob(World w, String name, int level, String id) {
         this.level = level;
-        mobId = SoulLand.getMobManager().putMobToRegistry(this);
+        mobId = SoulLand.getMobManager().putMobToRegistry(this,id);
         mobName = name;
         createHandle(w);
         initAttribute();
         tick.runTaskTimer(SoulLand.getPlugin(),1L,1L);
     }
 
-    SLMob(World w, String name, int level, boolean delayCreateHandle) {
+    SLMob(World w, String name, int level, boolean delayCreateHandle, String id) {
         this.level = level;
-        mobId = SoulLand.getMobManager().putMobToRegistry(this);
+        mobId = SoulLand.getMobManager().putMobToRegistry(this,id);
         mobName = name;
         if (!delayCreateHandle) {
             createHandle(w);
@@ -149,7 +154,7 @@ public abstract class SLMob implements CombatEntity {
 
     public void die() {
         remove();
-        if (objKill != null) objKill.mobDie();
+        if (trigger != null) trigger.mobDie();
     }
 
     public void setNoAI(boolean val) {
@@ -275,7 +280,11 @@ public abstract class SLMob implements CombatEntity {
         this.lastDamager = lastDamager.getHandle();
     }
 
-    public void setObjKill(ObjectiveKillMob objKill) {
-        this.objKill = objKill;
+    public void setTriggerAfterKill(TriggerKillMob trigger) {
+        this.trigger = trigger;
+    }
+
+    public void applyMoveset(Moveset ms) {
+        ms.apply(this);
     }
 }

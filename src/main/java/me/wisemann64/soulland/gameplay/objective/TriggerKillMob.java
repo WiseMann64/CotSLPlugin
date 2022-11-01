@@ -8,18 +8,18 @@ import org.bukkit.World;
 
 import java.lang.reflect.Constructor;
 
-public class ObjectiveKillMob extends Objective {
+public class TriggerKillMob extends Trigger {
 
     private SLMob mobToKill = null;
     private boolean mobDied = false;
 
-    public ObjectiveKillMob(Location location, MobGeneric.Customizer genericMobCustomizer) {
+    public TriggerKillMob(Location location, MobGeneric.Customizer genericMobCustomizer) {
         mobToKill = new MobGeneric(location.getWorld(),genericMobCustomizer);
-        mobToKill.setObjKill(this);
+        mobToKill.setTriggerAfterKill(this);
         mobToKill.spawn(location);
     }
 
-    public ObjectiveKillMob(Location location, Class<? extends SLMob> mobClass, String name) {
+    public TriggerKillMob(Location location, Class<? extends SLMob> mobClass, String name) {
         Constructor<?>[] constructors = mobClass.getDeclaredConstructors();
         for (Constructor<?> co : constructors) {
             if (co.getParameterCount() != 2) continue;
@@ -29,13 +29,13 @@ public class ObjectiveKillMob extends Objective {
             try {
                 mobToKill = (SLMob) co.newInstance(location.getWorld(), name);
             } catch (Exception ex) {
-                System.err.println("Failed to create ObjectiveKillMob " + this + " due to mob can't be spawned");
+                System.err.println("Failed to create TriggerKillMob " + this + " due to mob can't be spawned");
                 return;
             }
             break;
         }
         if (mobToKill != null) {
-            mobToKill.setObjKill(this);
+            mobToKill.setTriggerAfterKill(this);
             mobToKill.spawn(location);
         }
     }
@@ -49,4 +49,5 @@ public class ObjectiveKillMob extends Objective {
     public void mobDie() {
         mobDied = true;
     }
+
 }

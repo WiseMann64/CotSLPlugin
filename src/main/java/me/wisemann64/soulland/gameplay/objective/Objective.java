@@ -1,75 +1,40 @@
 package me.wisemann64.soulland.gameplay.objective;
 
-import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.gameplay.GameManager;
-import me.wisemann64.soulland.gameplay.GameplayEvent;
 
 import java.util.function.Consumer;
 
-public abstract class Objective implements GameplayEvent {
+public class Objective {
 
-    protected boolean completed = false;
-    protected String message = null;
+    private String message = null;
+    private final Trigger trigger;
 
-    protected String finishEventRef = null;
-    protected String startEventRef = null;
-
-    protected Consumer<GameManager> finishEvent = null;
-    protected Consumer<GameManager> startEvent = null;
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public abstract boolean check(GameManager game);
-
-    @Override
-    public Consumer<GameManager> finishEvent() {
-        return finishEvent == null ? SoulLand.getObjectParser().getEventOrAction(finishEventRef) : finishEvent;
-    }
-
-    @Override
-    public Consumer<GameManager> startEvent() {
-        return startEvent == null ? SoulLand.getObjectParser().getEventOrAction(startEventRef) : startEvent;
-    }
-
-    @Override
-    public Objective setFinishEvent(Consumer<GameManager> action) {
-        finishEventRef = null;
-        finishEvent = action;
-        return this;
-    }
-
-    @Override
-    public Objective setStartEvent(Consumer<GameManager> action) {
-        startEventRef = null;
-        startEvent = action;
-        return this;
-    }
-
-    @Override
-    public Objective setFinishEventReference(String ref) {
-        finishEvent = null;
-        finishEventRef = ref;
-        return this;
-    }
-
-    @Override
-    public Objective setStartEventReference(String ref) {
-        startEvent = null;
-        startEventRef = ref;
-        return this;
+    public Objective(Trigger trigger) {
+        this.trigger = trigger;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public Objective setMessage(String message) {
         this.message = message;
+        return this;
+    }
+
+    public Trigger getTrigger() {
+        return trigger;
+    }
+
+    public Consumer<GameManager> startEvent() {
+        return trigger == null ? null : trigger.startEvent();
+    }
+
+    public Consumer<GameManager> finishEvent() {
+        return trigger == null ? null : trigger.finishEvent();
+    }
+
+    public boolean check(GameManager gm) {
+        return trigger == null || trigger.check(gm);
     }
 }

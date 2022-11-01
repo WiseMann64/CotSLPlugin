@@ -8,6 +8,7 @@ public enum ObjectSource {
 
     $ACTIONS("gameplay/actions.json"),
     DEMO_OBJECTS("gameplay/demo/objects.json"),
+    TEST_PROLOGUE("gameplay/test/prologue.json")
     ;
 
     private final String path;

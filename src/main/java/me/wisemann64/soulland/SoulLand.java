@@ -97,6 +97,7 @@ public final class SoulLand extends JavaPlugin {
 
     private void pluginTick() {
         gameManager.mainTick();
+        mobManager.tick();
     }
 
     public static SoulLand getPlugin() {

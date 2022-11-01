@@ -7,12 +7,11 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ObjectiveGoToLocation extends Objective {
-
+public class TriggerGoToLocation extends Trigger {
     private final BoundingBox destination;
     private final World world;
 
-    public ObjectiveGoToLocation(BoundingBox destination, World world) {
+    public TriggerGoToLocation(BoundingBox destination, World world) {
         this.destination = destination;
         this.world = world;
     }
@@ -23,7 +22,7 @@ public class ObjectiveGoToLocation extends Objective {
 
     @Override
     public boolean check(GameManager game) {
-        if (completed) return true;
+        if (finished) return true;
         AtomicBoolean b = new AtomicBoolean(false);
         game.getRegisteredPlayers().forEach(p -> {
             Location l = p.getLocation();

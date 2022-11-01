@@ -1,0 +1,265 @@
+{
+  "intro_cutscene": {
+    "type": "CUTSCENE",
+    "frames": [
+      {
+        "type": "STATIC",
+        "world": "world",
+        "xyz": [-280.5,86.0,-101.3],
+        "yp": [-140.0,27.0],
+        "duration": 430
+      },
+      {
+        "type": "STATIC",
+        "world": "world",
+        "xyz": [-196.1,66.25,-197.5],
+        "yp": [90,0],
+        "duration": 75
+      }
+    ],
+    "dialogues": [
+      {
+        "at": 20,
+        "val": "&7&oOnce upon a time, there was a prosperous village"
+      },
+      {
+        "at": 90,
+        "val": "&7&oThe village itself surrounded by mountains, &6&oSinclair Mountains"
+      },
+      {
+        "at": 170,
+        "val": "&7&oThe villagers lived happily here"
+      },
+      {
+        "at": 230,
+        "val": "&7&oThey can fully fill their needs, by trading, farming and ranching"
+      },
+      {
+        "at": 310,
+        "val": "&7&oThe life inside that village was a true piece"
+      },
+      {
+        "at": 390,
+        "val": "&7&oUntil that time..."
+      },
+      {
+        "at": 460,
+        "val": "Oh shoot! I'm late!"
+      }
+    ],
+    "finish": "TEST_PROLOGUE.intro_cutscene_finish"
+  },
+  "intro_cutscene_finish": [
+    {
+      "action": "TELEPORT",
+      "value": {
+        "world": "world",
+        "x": -197.5,
+        "y": 67.0,
+        "z": -198.5,
+        "yaw": -45.0,
+        "pitch": 37.5
+      }
+    },
+    {
+      "action": "PLAY_SEQUENCE",
+      "value": {
+        "type": "SEQUENCE",
+        "actions": [
+          {
+            "at": 70,
+            "value": {
+              "action": "SHOUT",
+              "value": "But why the roosters didn't sound?"
+            }
+          },
+          {
+            "at": 160,
+            "value": {
+              "action": "SHOUT",
+              "value": "That's unusual"
+            }
+          },
+          {
+            "at": 220,
+            "value": {
+              "action": "SHOUT",
+              "value": "Ah, better stop complaining, Max need a breakfast"
+            }
+          },
+          {
+            "at": 300,
+            "value": {
+              "action": "SET_OBJECTIVE",
+              "value": "TEST_PROLOGUE.obj1"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "obj1": {
+    "type": "OBJECTIVE",
+    "value": {
+      "type": "TRIGGER",
+      "subtype": "GO_TO_LOCATION",
+      "value": {
+        "world": "world",
+        "borders": [
+          [-198.0,63.0,-200.0],
+          [-195.0,65.0,-199.0]
+        ]
+      },
+      "finish": "TEST_PROLOGUE.obj1_finish"
+    },
+    "message": "&7Go downstairs and feed your dog, &9Max"
+  },
+  "obj1_finish": {
+    "action": "PLAY_SEQUENCE",
+    "value": {
+      "type": "SEQUENCE",
+      "actions": [
+        {
+          "at": 10,
+          "value": {
+            "action": "SHOUT",
+            "value": "He is not here"
+          }
+        },
+        {
+          "at": 60,
+          "value": {
+            "action": "SHOUT",
+            "value": "Maybe he's playing around the village"
+          }
+        },
+        {
+          "at": 99,
+          "value": {
+            "action": "FILL_BLOCK",
+            "value": {
+              "corner": [-205,63,-203],
+              "width": [0,1,0],
+              "material": "AIR",
+              "world": "world"
+            }
+          }
+        },
+        {
+          "at": 100,
+          "value": {
+            "action": "SET_OBJECTIVE",
+            "value": "TEST_PROLOGUE.obj2"
+          }
+        }
+      ]
+    }
+  },
+  "obj2": {
+    "type": "OBJECTIVE",
+    "message": "&7Find &9Max",
+    "value": {
+      "type": "TRIGGER",
+      "subtype": "GO_TO_LOCATION",
+      "value": {
+        "world": "world",
+        "borders": [
+          [-226.0,63.0,-229.0],
+          [-241.0,68.0,-80.0]
+        ]
+      },
+      "finish": "TEST_PROLOGUE.obj2_finish"
+    }
+  },
+  "obj2_finish": {
+    "action": "PLAY_SEQUENCE",
+    "value": {
+      "type": "SEQUENCE",
+      "actions": [
+        {
+          "at": 10,
+          "value": {
+            "action": "SHOUT",
+            "value": "Where did the villagers gone?"
+          }
+        },
+        {
+          "at": 90,
+          "value": {
+            "action": "SHOUT",
+            "value": "They don't seem to be here..."
+          }
+        },
+        {
+          "at": 100,
+          "value":[
+            {
+              "action": "SHOUT",
+              "value": "TEST_PROLOGUE.obj3"
+            },
+            {
+              "action": "ADD_TRIGGER",
+              "value": "TEST_PROLOGUE.dt1"
+            },
+            {
+              "action": "ADD_TRIGGER",
+              "value": "TEST_PROLOGUE.dt2"
+            },
+            {
+              "action": "ADD_TRIGGER",
+              "value": "TEST_PROLOGUE.dt3"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "dt1": {
+    "type": "TRIGGER",
+    "subtype": "GO_TO_LOCATION",
+    "value": {
+      "identifier": "dt1",
+      "world": "world",
+      "borders": [
+        [-259.0,64.0,-188.0],
+        [-245.0,67.0,-176.0]
+      ]
+    },
+    "finish": {
+      "action": "SHOUT",
+      "value": "They usually gather here, but where are they now?"
+    }
+  },
+  "dt2": {
+    "type": "TRIGGER",
+    "subtype": "GO_TO_LOCATION",
+    "value": {
+      "identifier": "dt2",
+      "world": "world",
+      "borders": [
+        [-296.0,64.0,-135.0],
+        [-292.0,67.0,-129.0]
+      ]
+    },
+    "finish": {
+      "action": "SHOUT",
+      "value": "What the hell!?"
+    }
+  },
+  "dt3": {
+    "type": "TRIGGER",
+    "subtype": "GO_TO_LOCATION",
+    "value": {
+      "identifier": "dt3",
+      "world": "world",
+      "borders": [
+        [-245.0,61.0,-139.0],
+        [-243.0,63.0,-137.0]
+      ]
+    },
+    "finish": {
+      "action": "SHOUT",
+      "value": "Even the fishes gone too?"
+    }
+  }
+}

@@ -4,11 +4,12 @@ import me.wisemann64.soulland.SoulLand;
 import me.wisemann64.soulland.gameplay.cutscene.Cutscene;
 import me.wisemann64.soulland.gameplay.cutscene.Frame;
 import me.wisemann64.soulland.gameplay.objective.Objective;
+import me.wisemann64.soulland.gameplay.objective.Trigger;
 import me.wisemann64.soulland.gameplay.objects.ObjectParser;
 import me.wisemann64.soulland.gameplay.objects.ObjectSource;
+import me.wisemann64.soulland.gameplay.objects.Sequence;
 import me.wisemann64.soulland.system.players.SLPlayer;
 import me.wisemann64.soulland.system.util.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,7 @@ public class GameManager {
     private Map<SLPlayer,Location> cutsceneAfterPosition = new HashMap<>();
 
     private Objective currentObjective = null;
+    private final Map<String,Trigger> activeTriggers = new HashMap<>();
 
 
     public GameManager() {
@@ -59,8 +61,8 @@ public class GameManager {
     private void startDemo() {
         registeredPlayers.clear();
         registeredPlayers.addAll(SoulLand.getPlayerManager().getPlayers());
-        Cutscene c = op().getCutscene("cs1", ObjectSource.DEMO_OBJECTS);
-        c.play(new Location(Bukkit.getWorld("world"),-204.5,67,-202.5,90F,-15F));
+        Cutscene c = op().getCutscene("intro_cutscene", ObjectSource.TEST_PROLOGUE);
+        c.play();
     }
 
     public void setCurrentCutscene(Cutscene c) {
@@ -111,8 +113,9 @@ public class GameManager {
     }
 
     public void setObjective(Objective o) {
+        String prevMsg = currentObjective == null ? null : currentObjective.getMessage();
         currentObjective = o;
-        if (o.getMessage() != null) shout(o.getMessage());
+        if (o.getMessage() != null && !o.getMessage().equals(prevMsg)) shout("&eObjective &6&l>> &r" + o.getMessage());
         if (o.startEvent() != null) o.startEvent().accept(this);
     }
 
@@ -122,12 +125,31 @@ public class GameManager {
         if (t != null) t.accept(this);
     }
 
+    private void triggerTick() {
+        activeTriggers.entrySet().removeIf(e -> e.getValue().isFinished());
+        activeTriggers.forEach((key,t) -> {
+            boolean b = t.check(this);
+            if (b) {
+                t.finish();
+                if (t.finishEvent() != null) t.finishEvent().accept(this);
+            }
+        });
+    }
+
+    public void addTrigger(Trigger t) {
+        activeTriggers.put(t.identifier(),t);
+        if (t.startEvent() != null) t.startEvent().accept(this);
+    }
+
     private void demoTick() {
         // Cutscene
         if (currentCutscene != null) cutsceneTick();
 
         // Objective
         if (currentObjective != null) objectiveTick();
+
+        // Trigger
+        if (activeTriggers.size() != 0) triggerTick();
     }
 
     public List<SLPlayer> getRegisteredPlayers() {

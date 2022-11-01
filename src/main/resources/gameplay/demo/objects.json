@@ -99,53 +99,62 @@
   },
   "obj1": {
     "type": "OBJECTIVE",
-    "subtype": "GO_TO_LOCATION",
-    "destination": {
-      "world": "world",
-      "borders": [
-        [-226.0,63.0,-192.0],
-        [-214.0,70.0,-178.0]
-      ]
-    },
-    "finish": {
-      "action": "SET_OBJECTIVE",
-      "value": "DEMO_OBJECTS.obj2"
+    "value": {
+      "type": "TRIGGER",
+      "subtype": "GO_TO_LOCATION",
+      "value": {
+        "world": "world",
+        "borders": [
+          [-226.0,63.0,-192.0],
+          [-214.0,70.0,-178.0]
+        ]
+      },
+      "finish": {
+        "action": "SET_OBJECTIVE",
+        "value": "DEMO_OBJECTS.obj2"
+      }
     },
     "message": "&7Pergi ke &aBalai RT&7, &9ngab&7!"
   },
   "obj2": {
     "type": "OBJECTIVE",
-    "subtype": "KILL_MOB",
-    "mobToKill": {
-      "mobRef": "DEMO_OBJECTS.mob1",
-      "world": "world",
-      "location": [-220.0,64.0,-181.5,-180.0,0.0]
-    },
-    "finish": [
-      {
-        "action": "SHOUT",
-        "value": "&7&cPak RT&7 jadi hantu &9ngab&7!!!1!1!1!111"
+    "value": {
+      "type": "TRIGGER",
+      "subtype": "KILL_MOB",
+      "value": {
+        "mob": "DEMO_OBJECTS.mob1",
+        "world": "world",
+        "location": [-220.0,64.0,-181.5,-180.0,0.0]
       },
-      {
-        "action": "SET_OBJECTIVE",
-        "value": "DEMO_OBJECTS.obj3"
-      }
-    ],
+      "finish": [
+        {
+          "action": "SHOUT",
+          "value": "&7&cPak RT&7 jadi hantu &9ngab&7!!!1!1!1!111"
+        },
+        {
+          "action": "SET_OBJECTIVE",
+          "value": "DEMO_OBJECTS.obj3"
+        }
+      ]
+    },
     "message": "&7Bantai &cPak RT&7, &9ngab&7!"
   },
   "obj3": {
     "type": "OBJECTIVE",
-    "subtype": "KILL_MOB",
-    "mobToKill": {
-      "mobRef": "DEMO_OBJECTS.mob2",
-      "world": "world",
-      "location": [-220.0,64.0,-181.5,-180.0,0.0]
-    },
-    "finish": {
-      "action": "SHOUT",
-      "value": "&7Beres &9ngab&7, Anda hebat &9ngab&7!"
-    },
-    "message": "&7Bantai &cHantu Pak RT&7, &9ngab&7!"
+    "message": "&7Bantai &cHantu Pak RT&7, &9ngab&7!",
+    "value": {
+      "type": "TRIGGER",
+      "subtype": "KILL_MOB",
+      "value": {
+        "mob": "DEMO_OBJECTS.mob2",
+        "world": "world",
+        "location": [-220.0,64.0,-181.5,-180.0,0.0]
+      },
+      "finish": {
+        "action": "SHOUT",
+        "value": "&7Beres &9ngab&7, Anda hebat &9ngab&7!"
+      }
+    }
   },
   "mob1": {
     "type": "MOB_CUSTOMIZER",
@@ -153,6 +162,7 @@
       "mobType": "ZOMBIE",
       "xp": 30,
       "name": "Pak RT",
+      "id": "demo_pak_rt",
       "level": 40,
       "stats": {
         "health": 200,
@@ -165,6 +175,7 @@
     "customizer": {
       "mobType": "CREEPER",
       "name": "Hantu Pak RT",
+      "id": "hantu_pak_rt",
       "level": 25,
       "xp": 25,
       "explosionPower": 50,
@@ -242,5 +253,182 @@
       "material": "AIR",
       "world": "world"
     }
+  },
+  "spawn_action": {
+    "action": "SPAWN_MOB",
+    "value": {
+      "world": "world",
+      "at": [-220.0,64.0,-181.5],
+      "mob": "DEMO_OBJECTS.mob2"
+    }
+  },
+  "despawn_action": {
+    "action": "DESPAWN_MOB",
+    "value": [
+      "hantu_pak_rt"
+    ]
+  },
+  "move_action": {
+    "action": "TELEPORT_MOB",
+    "value": {
+      "id": "hantu_pak_rt",
+      "world": "world",
+      "to": [-220.0,72.0,-181.5],
+      "yp": [0,0]
+    }
+  },
+  "move1": {
+    "type": "MOVE",
+    "subtype": "CARTESIAN",
+    "value": {
+      "duration": 60,
+      "x": 0.2,
+      "y": 0,
+      "z": 0.2,
+      "yaw": 0.0,
+      "pitch": 0.0,
+      "ignore": false,
+      "look": false
+    }
+  },
+  "move2": {
+    "type": "MOVE",
+    "subtype": "POLAR",
+    "value": {
+      "duration": 60,
+      "velocity": 0.2,
+      "yaw": 0.0,
+      "pitch": 0.0,
+      "ignore": false,
+      "look": false
+    }
+  },
+  "move3": {
+    "type": "MOVE",
+    "subtype": "SIN",
+    "value": {
+      "duration": 200,
+      "direction": "y",
+      "amplitude": 1.2,
+      "period": 60,
+      "yaw": 0.0,
+      "pitch": 0.0
+    }
+  },
+  "moveset1": {
+    "type": "MOVE_SET",
+    "value": [
+      {
+        "type": "MOVE",
+        "subtype": "SIN",
+        "value": {
+          "duration": 400,
+          "direction": "y",
+          "amplitude": 1.5,
+          "period": 80,
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "ignore": true
+        }
+      },
+      {
+        "type": "MOVE",
+        "subtype": "POLAR",
+        "value": {
+          "duration": 60,
+          "velocity": 0.2,
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "ignore": false,
+          "look": false
+        }
+      }
+    ]
+  },
+  "anubis": {
+    "type": "MODEL",
+    "value": {
+      "type": "WITHER_SKELETON",
+      "id": "anubis",
+      "name": "&4Anubis",
+      "nameVisible": false,
+      "armor": [
+        "DRAGON_HEAD",
+        "GOLDEN_CHESTPLATE",
+        "GOLDEN_LEGGINGS",
+        "DIAMOND_BOOTS"
+      ],
+      "hand": [
+        "GOLDEN_HOE",
+        "NETHER_STAR"
+      ]
+    }
+  },
+  "vilbeg": {
+    "type": "MODEL",
+    "value": {
+      "type": "VILLAGER",
+      "id": "vilbeg",
+      "name": "&4VilBeg",
+      "nameVisible": true,
+      "extra": {
+        "villagerType": "SAVANNA",
+        "profession": "LIBRARIAN"
+      }
+    }
+  },
+  "spawnmod1": {
+    "action": "SPAWN_MODEL",
+    "value": {
+      "world": "world",
+      "at": [-266.5,62.0,-150.5],
+      "yp": [-57.0,0.0],
+      "model": "DEMO_OBJECTS.vilbeg"
+    }
+  },
+  "spawnmod2": {
+    "action": "SPAWN_MODEL",
+    "value": {
+      "world": "world",
+      "at": [-294.5,64.0,-131.5],
+      "yp": [-90.0,0.0],
+      "model": "DEMO_OBJECTS.anubis"
+    }
+  },
+  "movemob": {
+    "action": "MOVE_MOB",
+    "value": {
+      "id": "hantu_pak_rt",
+      "moveset": "DEMO_OBJECTS.moveset1"
+    }
+  },
+  "movemodel": {
+    "action": "MOVE_MODEL",
+    "value": {
+      "id": "anubis",
+      "moveset": "DEMO_OBJECTS.moveset1"
+    }
+  },
+  "tp1": {
+    "action": "TELEPORT_MODEL",
+    "value": {
+      "id": "anubis",
+      "world": "world",
+      "to": [-268.5,63.0,-149.5],
+      "yp": [-67.0,1.7]
+    }
+  },
+  "tp2": {
+    "action": "TELEPORT_MODEL",
+    "value": {
+      "id": "anubis",
+      "world": "world",
+      "to": [-243.5,82.0,-90.5],
+      "yp": [159.3,18.9]
+    }
+  },
+  "despawnmodel": {
+    "action": "DESPAWN_MODEL",
+    "value": "anubis"
   }
 }

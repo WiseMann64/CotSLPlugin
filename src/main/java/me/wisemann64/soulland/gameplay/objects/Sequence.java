@@ -1,12 +1,12 @@
-package me.wisemann64.soulland.gameplay;
+package me.wisemann64.soulland.gameplay.objects;
 
 import me.wisemann64.soulland.SoulLand;
+import me.wisemann64.soulland.gameplay.GameManager;
 import me.wisemann64.soulland.gameplay.cutscene.Action;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class Sequence {
 
